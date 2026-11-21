@@ -1,23 +1,19 @@
-name: Check Reminders
-
+name: reminders
 on:
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
-
 jobs:
-  check:
+  send:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - run: npm install firebase-admin
-      - name: Run reminder check
+          node-version: 20
+      - run: npm install firebase-admin@12
+      - run: node remind.js
         env:
-                ONESIGNAL_USER_ID: ${{ secrets.ONESIGNAL_USER_ID }}
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           ONESIGNAL_APP_ID: ${{ secrets.ONESIGNAL_APP_ID }}
-          ONESIGNAL_REST_API_KEY: ${{ secrets.ONESIGNAL_REST_API_KEY }}
-        run: node check-reminders.js
+          ONESIGNAL_REST_KEY: ${{ secrets.ONESIGNAL_REST_API_KEY }}

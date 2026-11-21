@@ -16,9 +16,8 @@ function parts(d){
 }
 
 let TOKENS = {};
-async function sendPush(uid, r){
-  const ids = (TOKENS[uid] && TOKENS[uid].onesignalIds) || [];
-  const target = ids.length ? { include_subscription_ids: ids } : { include_aliases: { external_id: [uid] } };
+
+async function sendViaOneSignal(uid, r, target, label){
   const body = {
     app_id: process.env.ONESIGNAL_APP_ID,
     target_channel: 'push',
@@ -32,8 +31,25 @@ async function sendPush(uid, r){
     body: JSON.stringify(body)
   });
   const j = await res.json().catch(() => ({}));
-  console.log('send', uid, res.status, JSON.stringify(j));
+  console.log('send', uid, 'via', label, res.status, JSON.stringify(j));
   return res.ok && !!j.id;
+}
+
+async function sendPush(uid, r){
+  const ids = (TOKENS[uid] && TOKENS[uid].onesignalIds) || [];
+
+  // الحل: نرسل أولاً عن طريق external_id وهو رقم حسابك الثابت ETH...
+  // هذا الرقم ما يتغير حتى لو تغير رقم الجهاز، فـ OneSignal هو يلقى جهازك المشترك الحالي ويدز له.
+  const okExternal = await sendViaOneSignal(uid, r, { include_aliases: { external_id: [uid] } }, 'external_id');
+  if (okExternal) return true;
+
+  // إذا فشل external_id، نجرب رقم الجهاز القديم المخزون كخطة بديلة فقط
+  if (ids.length) {
+    const okSub = await sendViaOneSignal(uid, r, { include_subscription_ids: ids }, 'subscription_ids');
+    if (okSub) return true;
+  }
+
+  return false;
 }
 
 (async () => {

@@ -1,0 +1,165 @@
+// functions/index.js - سيرفر تذكيرات عافيتي مع OneSignal
+// هذا السيرفر يشتغل كل دقيقة، يشوف منو عنده تذكير هسه، ويدز له اشعار.
+// الاشعار يندز من السيرفر، مو من التطبيق، حتى يوصلك وانت مسكر التطبيق.
+
+const { onSchedule } = require("firebase-functions/v2/scheduler");
+const admin = require("firebase-admin");
+
+admin.initializeApp();
+const db = admin.firestore();
+
+function getConfig() {
+  const appId = process.env.ONESIGNAL_APP_ID || "";
+  const restKey = process.env.ONESIGNAL_REST_API_KEY || "";
+  return { appId, restKey };
+}
+
+function getBaghdadNow() {
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Baghdad",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    weekday: "short",
+  }).formatToParts(now);
+  const get = (t) => parts.find((p) => p.type === t)?.value;
+  return {
+    timeStr: `${get("hour")}:${get("minute")}`,
+    dateStr: `${get("year")}-${get("month")}-${get("day")}`,
+    weekday: get("weekday"),
+    now,
+  };
+}
+
+function extractTime(reminder) {
+  if (reminder.time && typeof reminder.time === "object" && reminder.time.toDate) {
+    const d = reminder.time.toDate();
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Baghdad",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).formatToParts(d);
+    const get = (t) => parts.find((p) => p.type === t)?.value;
+    return `${get("hour")}:${get("minute")}`;
+  }
+  const candidates = [reminder.time, reminder.reminderTime, reminder.hour, reminder.timeStr];
+  for (const c of candidates) {
+    if (typeof c === "string") {
+      const m = c.match(/(\d{1,2}):(\d{2})/);
+      if (m) {
+        let h = parseInt(m[1], 10);
+        const min = m[2];
+        if (/pm|م|مساء/i.test(c) && h < 12) h += 12;
+        if (/am|ص|صباح/i.test(c) && h === 12) h = 0;
+        return `${String(h).padStart(2, "0")}:${min}`;
+      }
+    }
+  }
+  return null;
+}
+
+function getUserId(reminder) {
+  return reminder.userId || reminder.uid || reminder.user_id || reminder.userUid || null;
+}
+
+function getTitle(reminder) {
+  return reminder.title || reminder.medicine || reminder.medicineName || reminder.drug || reminder.drugName || reminder.name || reminder.note || "حان وقت الدواء";
+}
+
+function getMessage(reminder) {
+  const title = getTitle(reminder);
+  const note = reminder.note || reminder.notes || reminder.details || "";
+  if (note && note !== title) return `${title} - ${note}`;
+  return `حان وقت: ${title}`;
+}
+
+async function sendOneSignal({ appId, restKey, userId, title, message, reminderId }) {
+  const res = await fetch("https://api.onesignal.com/notifications", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Key ${restKey}`,
+    },
+    body: JSON.stringify({
+      app_id: appId,
+      target_channel: "push",
+      include_aliases: { external_id: [String(userId)] },
+      headings: { en: "عافيتي", ar: "عافيتي" },
+      contents: { en: message, ar: message },
+      data: { reminderId: String(reminderId || ""), type: "reminder", title },
+    }),
+  });
+  const text = await res.text();
+  if (!res.ok) throw new Error(`OneSignal ${res.status}: ${text}`);
+  return text;
+}
+
+async function processCollection(collectionName, baghdad, config) {
+  const snap = await db.collection(collectionName).get();
+  let sent = 0;
+  for (const doc of snap.docs) {
+    const r = doc.data();
+    if (r.enabled === false || r.active === false || r.isEnabled === false) continue;
+    const userId = getUserId(r);
+    if (!userId) continue;
+    const timeStr = extractTime(r);
+    if (!timeStr) continue;
+    if (timeStr !== baghdad.timeStr) continue;
+    const lastFired = r.lastFiredDate || r.lastFired || r.firedDate || "";
+    if (lastFired === baghdad.dateStr) continue;
+    const message = getMessage(r);
+    try {
+      await sendOneSignal({ appId: config.appId, restKey: config.restKey, userId, title: getTitle(r), message, reminderId: doc.id });
+      console.log(`Sent reminder ${doc.id} to ${userId} at ${baghdad.timeStr}`);
+      sent++;
+      const update = { lastFiredDate: baghdad.dateStr, lastFiredAt: admin.firestore.FieldValue.serverTimestamp() };
+      if (r.repeat === "once" || r.frequency === "once" || r.type === "once") update.enabled = false;
+      await doc.ref.update(update);
+    } catch (e) {
+      console.error(`Failed reminder ${doc.id}:`, e.message);
+    }
+  }
+  return sent;
+}
+
+exports.sendReminders = onSchedule(
+  { schedule: "every 1 minutes", timeZone: "Asia/Baghdad", region: "us-central1" },
+  async () => {
+    const config = getConfig();
+    if (!config.appId || !config.restKey) {
+      console.error("Missing ONESIGNAL_APP_ID or ONESIGNAL_REST_API_KEY. Set them in .env");
+      return;
+    }
+    const baghdad = getBaghdadNow();
+    console.log(`Checking reminders at ${baghdad.dateStr} ${baghdad.timeStr} Baghdad`);
+    let total = 0;
+    for (const col of ["reminders", "sehaty_reminders"]) {
+      try { total += await processCollection(col, baghdad, config); }
+      catch (e) { console.log(`Collection ${col} skipped: ${e.message}`); }
+    }
+    try {
+      const usersSnap = await db.collection("users").get();
+      for (const userDoc of usersSnap.docs) {
+        const subSnap = await userDoc.ref.collection("reminders").get();
+        for (const doc of subSnap.docs) {
+          const r = doc.data();
+          if (r.enabled === false || r.active === false) continue;
+          const timeStr = extractTime(r);
+          if (timeStr !== baghdad.timeStr) continue;
+          if ((r.lastFiredDate || "") === baghdad.dateStr) continue;
+          try {
+            await sendOneSignal({ appId: config.appId, restKey: config.restKey, userId: userDoc.id, title: getTitle(r), message: getMessage(r), reminderId: doc.id });
+            await doc.ref.update({ lastFiredDate: baghdad.dateStr, lastFiredAt: admin.firestore.FieldValue.serverTimestamp() });
+            total++;
+          } catch (e) { console.error(`Failed sub reminder ${doc.id}:`, e.message); }
+        }
+      }
+    } catch (e) { console.log("users subcollection skipped:", e.message); }
+    console.log(`Done, sent ${total}`);
+  }
+);

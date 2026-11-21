@@ -1,44 +1,46 @@
-// afiaty-median-onesignal.js - نسخة Median الصحيحة v3
+// afiaty-median-onesignal.js - نسخة فحص v4
 (function () {
-  function saveId(subId, oneId, raw) {
+  function saveId(subId, oneId) {
     var id = subId || oneId;
     if (!id || id.length < 10) return false;
     try {
       localStorage.setItem('afiaty_player_id', id);
       localStorage.setItem('onesignal_player_id', id);
       localStorage.setItem('playerId', id);
-      if (oneId) localStorage.setItem('afiaty_onesignal_id', oneId);
-      if (subId) localStorage.setItem('afiaty_subscription_id', subId);
       window.AfiatyPlayerId = id;
-      window.AfiatyOneSignalInfo = raw || null;
     } catch (e) {}
-    console.log('Afiaty OneSignal:', id);
     return true;
   }
-  function toastMsg(m) {
-    try { if (window.toast) window.toast(m); else console.log(m); } catch (e) { console.log(m); }
+  function showDebug() {
+    var m = window.median ? 'YES' : 'NO';
+    var g = window.gonative ? 'YES' : 'NO';
+    var mk = window.median ? Object.keys(window.median).join(',') : 'none';
+    var ok = (window.median && window.median.onesignal) ? 'YES' : 'NO';
+    var okk = (window.median && window.median.onesignal) ? Object.keys(window.median.onesignal).join(',') : 'none';
+    var msg = 'median: ' + m + '\ngonative: ' + g + '\nmedian keys: ' + mk + '\nonesignal: ' + ok + '\nonesignal keys: ' + okk;
+    try { alert(msg); } catch (e) { console.log(msg); }
+    return msg;
   }
   window.median_onesignal_info = function (info) {
     try {
       if (!info) return;
-      var subId = (info.subscription && info.subscription.id) || info.subscriptionId || info.subscription_id || null;
-      var oneId = info.oneSignalId || info.oneSignalUserId || info.userId || info.oneSignal_id || null;
-      if (subId || oneId) saveId(subId, oneId, info);
+      var subId = (info.subscription && info.subscription.id) || info.subscriptionId || null;
+      var oneId = info.oneSignalId || info.oneSignalUserId || info.userId || null;
+      if (subId || oneId) saveId(subId, oneId);
       else { try { localStorage.setItem('afiaty_onesignal_debug', JSON.stringify(info)); } catch (e) {} }
     } catch (e) {}
   };
   window.gonative_onesignal_info = window.median_onesignal_info;
   async function requestInfo() {
     try {
-      var bridges = [];
-      if (window.median && window.median.onesignal) bridges.push(window.median.onesignal);
-      if (window.gonative && window.gonative.onesignal) bridges.push(window.gonative.onesignal);
-      for (var i = 0; i < bridges.length; i++) {
-        var os = bridges[i];
-        try { if (os.info) os.info(); } catch (e) {}
+      var list = [];
+      if (window.median && window.median.onesignal) list.push(window.median.onesignal);
+      if (window.gonative && window.gonative.onesignal) list.push(window.gonative.onesignal);
+      for (var i = 0; i < list.length; i++) {
+        try { if (list[i].info) list[i].info(); } catch (e) {}
         try {
-          if (os.onesignalInfo) {
-            var p = os.onesignalInfo();
+          if (list[i].onesignalInfo) {
+            var p = list[i].onesignalInfo();
             if (p && p.then) { var info = await p; if (info) window.median_onesignal_info(info); }
           }
         } catch (e) {}
@@ -48,35 +50,26 @@
     return null;
   }
   async function activate() {
-    toastMsg('جاري تفعيل الإشعارات...');
+    var dbg = showDebug();
     try {
       var saved = localStorage.getItem('afiaty_player_id');
-      if (saved && saved.length > 10) { toastMsg('تم تفعيل الإشعارات ✅'); return saved; }
+      if (saved && saved.length > 10) { alert('تم تفعيل الإشعارات ✅\nID: ' + saved); return saved; }
     } catch (e) {}
-    try { if ('Notification' in window && Notification.permission !== 'granted') { try { await Notification.requestPermission(); } catch (e) {} } } catch (e) {}
-    for (var k = 0; k < 6; k++) {
+    for (var k = 0; k < 4; k++) {
       var id = await requestInfo();
-      if (id && id.length > 10) { toastMsg('تم تفعيل الإشعارات ✅'); return id; }
+      if (id && id.length > 10) { alert('تم تفعيل الإشعارات ✅\nID: ' + id); return id; }
       await new Promise(function (r) { setTimeout(r, 2000); });
     }
-    if (!window.median && !window.gonative) toastMsg('تعذر: جسر Median غير موجود');
-    else toastMsg('تعذر: Median لم يرجع ID - تأكد ان FCM مرفوع في OneSignal');
+    alert('تعذر تفعيل الإشعارات\n' + dbg + '\n\nاذا median=NO، يعني الجسر مو مفعل في Median. اذا onesignal=NO، يعني OneSignal مو مفعل او FCM مو مرفوع.');
     return null;
   }
   window.AfiatyEnableNotifications = activate;
   window.enableNotifications = activate;
   window.activateNotifications = activate;
-  window.AfiatyGetPlayerId = async function () {
-    await requestInfo();
-    try { return localStorage.getItem('afiaty_player_id'); } catch (e) { return null; }
-  };
-  async function auto() {
-    for (var i = 0; i < 5; i++) {
-      var id = await requestInfo();
-      if (id && id.length > 10) break;
-      await new Promise(function (r) { setTimeout(r, 2000); });
-    }
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', auto);
-  else setTimeout(auto, 1000);
+  function auto() { requestInfo(); }
+  document.addEventListener('median_library_ready', auto);
+  window.addEventListener('median_library_ready', auto);
+  document.addEventListener('gonative_library_ready', auto);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(auto, 2000); });
+  else setTimeout(auto, 2000);
 })();

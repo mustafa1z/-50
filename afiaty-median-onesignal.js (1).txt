@@ -1,0 +1,71 @@
+// afiaty-median-onesignal.js
+// عافيتي - ربط OneSignal مع Median
+// هذا الملف تربطه بموقعك، هو يربط حساب المستخدم بـ OneSignal
+// حتى السيرفر يعرف لمن يدز التذكير.
+// لا تحط بيه الـ REST API Key ابدا، هذا الملف ينقرأ من التطبيق.
+
+(function () {
+  function getBridge() {
+    if (window.median && window.median.onesignal) return window.median.onesignal;
+    if (window.Median && window.Median.onesignal) return window.Median.onesignal;
+    return null;
+  }
+
+  window.median_onesignal_info = function (info) {
+    try { console.log("[Afiaty OneSignal]", info); } catch (e) {}
+    try {
+      if (info && info.oneSignalId) localStorage.setItem("afiaty_onesignal_id", info.oneSignalId);
+      if (info && info.externalId) localStorage.setItem("afiaty_external_id", info.externalId);
+    } catch (e) {}
+  };
+
+  async function loginOneSignal(uid) {
+    if (!uid) return;
+    var bridge = getBridge();
+    if (!bridge) return;
+    try {
+      if (bridge.login) await bridge.login(String(uid));
+      if (bridge.info) { try { await bridge.info(); } catch (e) {} }
+      console.log("[Afiaty] OneSignal linked:", uid);
+    } catch (e) {
+      console.warn("[Afiaty] OneSignal login failed", e);
+    }
+  }
+
+  async function logoutOneSignal() {
+    var bridge = getBridge();
+    if (!bridge) return;
+    try { if (bridge.logout) await bridge.logout(); } catch (e) {}
+  }
+
+  window.afiatyLinkOneSignal = loginOneSignal;
+  window.afiatyLogoutOneSignal = logoutOneSignal;
+
+  function hookCompatAuth() {
+    try {
+      if (window.firebase && window.firebase.auth) {
+        window.firebase.auth().onAuthStateChanged(function (user) {
+          if (user && user.uid) loginOneSignal(user.uid);
+          else logoutOneSignal();
+        });
+        return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  var tries = 0;
+  var timer = setInterval(function () {
+    tries++;
+    if (hookCompatAuth() || tries > 20) clearInterval(timer);
+  }, 500);
+
+  // اذا تستخدم Firebase Modular، حط بعد تسجيل الدخول:
+  // window.afiatyLinkOneSignal(user.uid);
+  try {
+    var savedUid = localStorage.getItem("afiaty_uid") || localStorage.getItem("uid");
+    if (savedUid) {
+      setTimeout(function () { loginOneSignal(savedUid); }, 1500);
+    }
+  } catch (e) {}
+})();

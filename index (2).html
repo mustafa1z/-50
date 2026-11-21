@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f766e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="عافيتي">
+<title>عافيتي - النسخة الآمنة</title>
+<style>
+:root{
+  --bg:#f3f6f6;--card:#fff;--line:#e3ebea;--teal:#0f766e;--teal2:#14958a;--teal-soft:#e8f4f2;
+  --ink:#0f1f1e;--muted:#64748b;--danger:#dc2626;--amber:#b45309;
+  --r:16px;--shadow:0 1px 2px rgba(15,31,30,.04),0 4px 14px rgba(15,31,30,.05);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Roboto,Arial,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--teal)}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 70px}
+
+/* header */
+header{position:sticky;top:0;z-index:20;margin:0 -14px 12px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(243,246,246,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.logo{display:flex;gap:10px;align-items:center;min-width:0}
+.logoIcon{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;display:grid;place-items:center;font-size:20px;box-shadow:0 4px 10px rgba(15,118,110,.25);flex:none}
+.logo strong{font-size:18px;display:block;line-height:1.2}
+header .small{font-size:11px;color:var(--muted);line-height:1.3}
+#headerActions{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);animation:in .25s ease both}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.card{animation:none}}
+h1{font-size:22px;margin:0 0 6px;line-height:1.4} h2{font-size:17px;margin:0 0 10px;line-height:1.4} h3{font-size:15px;margin:14px 0 8px}
+p{line-height:1.75;margin:8px 0}
+.muted{color:var(--muted);font-size:13px;line-height:1.7}
+.small{font-size:12px;color:var(--muted)} .center{text-align:center}
+
+/* forms */
+.label{display:block;font-weight:700;margin:14px 0 6px;font-size:13px;color:#334155}
+input,select,textarea{width:100%;padding:12px 13px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;background:#fbfdfd;font-family:inherit;color:var(--ink);transition:border-color .15s,box-shadow .15s;outline:0}
+input:focus,select:focus,textarea:focus{border-color:var(--teal2);box-shadow:0 0 0 3px rgba(20,149,138,.15);background:#fff}
+textarea{min-height:84px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px} @media(max-width:560px){.grid2{grid-template-columns:1fr}}
+
+/* buttons */
+.btn{background:linear-gradient(135deg,var(--teal),var(--teal2));color:#fff;border:0;padding:12px 18px;border-radius:12px;font-weight:700;cursor:pointer;font-size:15px;font-family:inherit;transition:transform .1s,opacity .15s;box-shadow:0 2px 8px rgba(15,118,110,.2)}
+.btn:active{transform:scale(.97)}
+.btn.secondary{background:var(--teal-soft);color:var(--teal);box-shadow:none}
+.btn.ghost{background:transparent;color:var(--teal);box-shadow:none}
+.btn.danger{background:var(--danger);color:#fff;box-shadow:none}
+.btn.small{padding:8px 12px;font-size:13px;border-radius:10px}
+.btn:disabled{opacity:.6;cursor:wait}
+
+/* chips / badges */
+.badge{display:inline-block;background:var(--teal-soft);color:var(--teal);padding:4px 10px;border-radius:999px;font-size:12px;font-weight:700;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+.badge.warn{background:#fef3c7;color:#92400e} .badge.red{background:#fee2e2;color:#991b1b}
+.chip{border:1px solid var(--line);background:#f8fafc;padding:6px 11px;border-radius:999px;font-size:13px;cursor:pointer}
+.chip.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* tabs: horizontal scroll, no wrapping mess */
+.tabs{display:flex;gap:6px;margin:0 -14px 12px;padding:2px 14px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none;padding:9px 15px;border-radius:999px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:700;font-size:14px;font-family:inherit;color:#475569;transition:background .15s,color .15s}
+.tab.active{background:var(--teal);color:#fff;border-color:var(--teal);box-shadow:0 3px 10px rgba(15,118,110,.25)}
+
+/* items */
+.item{border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:10px 0;background:#fff}
+.item.patItem{cursor:pointer;transition:border-color .15s,background .15s}
+.item.patItem:active{background:var(--teal-soft)}
+.flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center} .between{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px} @media(max-width:560px){.stat{gap:6px}}
+.stat div{background:var(--teal-soft);border:0;border-radius:14px;padding:12px 6px;text-align:center;font-size:12px;color:var(--muted)}
+.stat b{font-size:20px;display:block;color:var(--teal)}
+
+/* notices */
+.alert{background:#fffbeb;border:1px solid #fcd34d;color:#92400e;border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.7}
+.alert.green{background:#ecfdf5;border-color:#86efac;color:#14532d}
+.alert.red{background:#fef2f2;border-color:#fca5a5;color:#991b1b}
+.secure{background:var(--teal-soft);border:1px solid #bfe3de;color:#115e59;border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.75}
+code{background:#0f172a;color:#e2e8f0;padding:2px 6px;border-radius:6px;font-size:12px}
+.bar{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden} .bar i{display:block;height:100%;background:var(--teal)}
+
+/* toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0f1f1e;color:#fff;padding:12px 18px;border-radius:14px;z-index:99;max-width:92%;text-align:center;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:in .2s ease both}
+
+/* auth landing: soften the loud inline blocks */
+.card.center h1{font-size:24px !important}
+
+/* ===== app-like polish ===== */
+.wrap{padding-bottom:96px}
+/* bottom navigation (patient + doctor tabs) */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px));gap:2px;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);overflow:visible;justify-content:space-around}
+.tab{flex:1;min-width:0;padding:6px 2px 4px;border:0;border-radius:12px;background:transparent;color:#64748b;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:none;line-height:1.3}
+.tab::before{font-size:20px;line-height:1.1;filter:grayscale(1);opacity:.65;transition:.15s}
+.tab.active{background:var(--teal-soft);color:var(--teal);border:0;box-shadow:none}
+.tab.active::before{filter:none;opacity:1;transform:translateY(-1px)}
+.tab[onclick*="'home'"]::before{content:"🏠"}
+.tab[onclick*="'meas'"]::before{content:"📈"}
+.tab[onclick*="'meds'"]::before{content:"💊"}
+.tab[onclick*="'rems'"]::before{content:"⏰"}
+.tab[onclick*="'report'"]::before{content:"📄"}
+.tab[onclick*="'profile'"]::before{content:"👤"}
+.tab[onclick*="'patients'"]::before{content:"🧑‍⚕️"}
+.tab[onclick*="'requests'"]::before{content:"🔔"}
+.toast{bottom:90px}
+/* calmer landing */
+.btn[style*="b45309"]{background:transparent !important;color:var(--amber);box-shadow:none;font-size:14px !important;padding:10px !important;border:1px dashed #e7c9a0}
+.card[style*="2px solid #0f766e"]{border:1px solid #bfe3de !important;background:var(--teal-soft)}
+.card[style*="2px solid #0f766e"] h2{font-size:16px}
+.card.center{background:linear-gradient(180deg,#fff,#f3faf9);padding:22px 16px}
+.card.center .flex{flex-direction:column;align-items:stretch}
+.card.center .flex .btn{width:100%;padding:14px}
+/* splash / offline */
+.splash{display:grid;place-items:center;text-align:center;padding:90px 20px;color:var(--muted);gap:14px}
+.spin{width:34px;height:34px;border-radius:50%;border:3px solid #cfe5e2;border-top-color:var(--teal);animation:sp .8s linear infinite;margin:auto}
+@keyframes sp{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="logo"><div class="logoIcon">♥</div><div><strong style="font-size:18px">عافيتي</strong><div class="small">متابعة صحتك بسهولة</div></div></div>
+<div id="headerActions"></div>
+</header>
+<div id="app"><div class="splash" id="splash"><div class="spin"></div><div>جاري تحميل عافيتي…</div></div></div>
+<div id="toastWrap"></div>
+</div>
+
+<script>
+setTimeout(function(){
+  var sp=document.getElementById('splash');
+  if(sp){ sp.innerHTML='<div style="font-size:46px">📡</div><b style="color:#0f1f1e;font-size:17px">تعذر الاتصال بالخادم</b><div style="max-width:300px;line-height:1.8;font-size:13px">افتح التطبيق من رابطه الحقيقي (بعد النشر) على متصفح كروم، وتأكد من الإنترنت. المعاينة داخل بعض التطبيقات تمنع الاتصال.</div><button class="btn" onclick="location.reload()">إعادة المحاولة</button>'; }
+}, 7000);
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, deleteUser, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
+import { getDatabase, ref, set, get, update, remove, push, query, orderByChild, equalTo, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBG-xwxw6GuVhxL6mFsTlg0pJE6w_Oigtw",
+  authDomain: "afiaty-app-c4d19.firebaseapp.com",
+  databaseURL: "https://afiaty-app-c4d19-default-rtdb.firebaseio.com",
+  projectId: "afiaty-app-c4d19",
+  storageBucket: "afiaty-app-c4d19.firebasestorage.app",
+  messagingSenderId: "517088634256",
+  appId: "1:517088634256:web:491bcbdeda8acb5704ff15",
+  measurementId: "G-D9KVXC9R2N"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const $ = s => document.querySelector(s);
+const appEl = document.getElementById('app');
+const toastWrap = document.getElementById('toastWrap');
+let profile = null;
+let _fast=false,_loaded=false,_loadedD=false;
+let currentTab = 'home';
+let selectedPatientUid = null;
+let selectedPatientProfile = null;
+let cache = { measurements:{}, medicines:{}, reminders:{}, notes:{}, requests:[], doctorPatients:{}, link:null };
+
+function toast(msg, ms=3500){ const d=document.createElement('div'); d.className='toast'; d.textContent=msg; toastWrap.appendChild(d); setTimeout(()=>d.remove(), ms); }
+function esc(s){ return String(s??'').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function normalizePhone(phone){ let d = String(phone||'').replace(/\D/g,''); if(!d) return ''; if(d.startsWith('00964')) d = '0' + d.slice(5); else if(d.startsWith('964') && d.length>=12) d = '0' + d.slice(3); else if(d.length===10 && d.startsWith('77')) d = '0' + d; return d; }
+function phoneVariants(phone){ const c = normalizePhone(phone); const raw = String(phone||'').replace(/\D/g,''); const list=[]; const push=v=>{ if(v && !list.includes(v)) list.push(v); }; push(c); push(raw); if(c.startsWith('0')){ push('964'+c.slice(1)); push('00964'+c.slice(1)); } return list; }
+function derivedEmail(phone){ return `u${normalizePhone(phone)}@afiaty.app`; }
+function isRealEmail(email){ return email && !email.endsWith('@afiaty.app') && email.includes('@') && email.includes('.'); }
+function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email||''); }
+async function lookupAuthEmailByPhone(phone){ for(const v of phoneVariants(phone)){ try{ const s = await get(ref(db,'sehaty_phone_to_email/'+v)); if(s.exists() && s.val() && s.val().email) return s.val(); }catch(e){} } return null; }
+async function savePhoneMapping(phone, email, uid, recoveryEmail){ try{ await set(ref(db,'sehaty_phone_to_email/'+normalizePhone(phone)), { email, uid, recoveryEmail: recoveryEmail||'' }); }catch(e){ console.warn('savePhoneMapping failed', e); } }
+
+// ===== تنبيه حقيقي بدون ما تفتح التطبيق - PWA + FCM =====
+// ملاحظة مهمة: هاي تشتغل فقط إذا التطبيق مثبّت من رابط https، مو من ملف file://
+// المفتاح لازم تجيبه من Firebase Console > Project Settings > Cloud Messaging > Web Push certificates
+const VAPID_KEY = 'PASTE_YOUR_VAPID_KEY_HERE';
+async function registerSW(){ try{ if(!('serviceWorker' in navigator)) return null; if(location.protocol==='file:'){ console.log('SW needs https, not file://'); return null; } const reg = await navigator.serviceWorker.register('firebase-messaging-sw.js'); console.log('SW registered', reg); return reg; }catch(e){ console.log('SW failed', e); return null; } }
+async function setupPush(){
+  try{
+    if(location.protocol==='file:'){ return { ok:false, reason:'file' }; }
+    if(!('Notification' in window)){ return { ok:false, reason:'no-notif' }; }
+    const perm = await Notification.requestPermission();
+    if(perm!=='granted') return { ok:false, reason:'denied' };
+    const reg = await registerSW();
+    if(!reg) return { ok:false, reason:'no-sw' };
+    if(!VAPID_KEY || VAPID_KEY.includes('PASTE_')){ return { ok:false, reason:'no-vapid' }; }
+    const messaging = getMessaging(app);
+    const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: reg });
+    if(token && profile){ await set(ref(db,'sehaty_fcm_tokens/'+profile.uid), { token, updatedAt: new Date().toISOString(), platform: 'web' }); try{ localStorage.setItem('afiaty_fcm_token', token); }catch(e){} }
+    // رسائل وانت فاتح التطبيق
+    try{ onMessage(messaging, (payload)=>{ const t = payload?.notification?.title || 'عافيتي'; const b = payload?.notification?.body || 'عندك تذكير'; try{ new Notification(t, { body: b }); }catch(e){} playAlertSound(); toast(b); }); }catch(e){}
+    return { ok:true, token };
+  }catch(e){ console.log('setupPush failed', e); return { ok:false, reason: e.message }; }
+}
+const IS_APP = /median|gonative/i.test(navigator.userAgent) || !!window.median;
+let _pushState = 'جارٍ الفحص…';
+function setPushState(t){
+  _pushState=t; const el=document.getElementById('pushState'); if(el) el.textContent=t;
+  const b=document.getElementById('pushBadge');
+  if(b && IS_APP){ const ok=t.includes('✅'); b.textContent = ok ? 'الإشعارات مفعّلة' : 'قيد ربط الجهاز'; b.className = 'badge' + (ok ? '' : ' warn'); }
+}
+const withTimeout = (p,ms)=>Promise.race([Promise.resolve(p), new Promise(r=>setTimeout(()=>r('__timeout__'),ms))]);
+function pickIds(info){
+  const out=[]; if(typeof info==='string'){ try{ info=JSON.parse(info); }catch(e){ return out; } }
+  if(!info || typeof info!=='object') return out;
+  for(const k of ['oneSignalUserId','subscriptionId','oneSignalSubscriptionId','oneSignalId','userId','playerId']){
+    const v=info[k]; if(typeof v==='string' && /^[0-9a-f-]{36}$/i.test(v) && !out.includes(v)) out.push(v);
+  }
+  return out;
+}
+async function savePushIds(ids){
+  try{ if(!profile || !ids.length) return false;
+    await set(ref(db,'sehaty_fcm_tokens/'+profile.uid), { onesignalIds: ids, platform:'median', updatedAt:new Date().toISOString() });
+    return true;
+  }catch(e){ console.log('savePushIds failed', e); return false; }
+}
+window.median_onesignal_info = (info)=>{ const ids=pickIds(info); if(ids.length) savePushIds(ids).then(ok=>{ if(ok) setPushState('الجهاز مربوط بحسابك ✅'); }); };
+async function bindPush(uid){
+  try{
+    if(!(window.median && median.onesignal)){ setPushState('الجهاز غير مربوط: افتح التطبيق من الـ APK'); return; }
+    const o = median.onesignal;
+    setPushState('جارٍ ربط الجهاز…');
+    let info=null;
+    try{ if(typeof o.info==='function') info = await withTimeout(o.info(), 4000); }catch(e){}
+    try{ if(typeof o.onesignalInfo==='function') o.onesignalInfo(); }catch(e){}
+    const ids = pickIds(info);
+    if(ids.length){ setPushState((await savePushIds(ids)) ? 'الجهاز مربوط بحسابك ✅' : 'تعذر حفظ ربط الجهاز (صلاحيات قاعدة البيانات)'); }
+    else{ setPushState('لم يصل معرّف الجهاز' + (info==='__timeout__' ? ' (انتهت المهلة)' : (info && typeof info==='object' ? ' ('+Object.keys(info).join(',')+')' : ''))); }
+    // اختياري: لا ننتظرها حتى لا تعلّق
+    try{ if(typeof o.login==='function') withTimeout(o.login(uid),3000); else if(o.externalUserId && typeof o.externalUserId.set==='function') withTimeout(o.externalUserId.set({externalId:uid}),3000); }catch(e){}
+    try{ if(o.tags && typeof o.tags.setTags==='function') withTimeout(o.tags.setTags({tags:{uid:uid}}),3000); }catch(e){}
+  }catch(e){ setPushState('تعذر ربط الجهاز'); }
+}
+function unbindPush(){ try{ if(window.median && median.onesignal && typeof median.onesignal.logout==='function') median.onesignal.logout(); }catch(e){} }
+window.enablePush = async ()=>{
+  try{
+    if(IS_APP){
+      // داخل تطبيق الـ APK: التسجيل يتم عبر OneSignal الخاص بـ Median (إذا كان مفعّلاً بالبناء)
+      const ok = !!(window.median && median.onesignal && typeof median.onesignal.register==='function');
+      if(!ok){ toast('هذا الإصدار من التطبيق لا يدعم الإشعارات والتطبيق مغلق. التنبيهات تعمل فقط والتطبيق مفتوح.', 6000); return; }
+      try{ median.onesignal.register(); }catch(e){}
+      toast('تم طلب تفعيل الإشعارات - اقبل الإذن إذا ظهر لك');
+      if(profile) setTimeout(()=>bindPush(profile.uid),1500);
+      return;
+    }
+    const r = await setupPush();
+    if(r.ok){ toast('تم تفعيل الإشعارات ✅'); await renderPatient(); }
+    else if(r.reason==='denied'){ toast('رفضت إذن الإشعارات - فعله من إعدادات الجهاز'); }
+    else { toast('تعذر تفعيل الإشعارات على هذا الجهاز'); }
+  }catch(e){ toast('تعذر تفعيل الإشعارات'); }
+};
+
+// ===== نظام التنبيه الاحتياطي (إذا كان التطبيق مفتوح) =====
+let _remTimer = null;
+function notifPerm(){ try{ return ('Notification' in window) ? Notification.permission : 'unsupported'; }catch(e){ return 'unsupported'; } }
+async function requestNotifPerm(){ try{ if(!('Notification' in window)){ toast('متصفحك ما يدعم الإشعارات'); return 'unsupported'; } const p = await Notification.requestPermission(); if(p==='granted'){ toast('تم تفعيل التنبيهات ✅'); } else { toast('ما انطيت إذن للإشعارات'); } return p; }catch(e){ return 'denied'; } }
+function playAlertSound(){ try{ const C = window.AudioContext || window.webkitAudioContext; if(!C) return; const ctx = new C(); for(let i=0;i<3;i++){ const o=ctx.createOscillator(); const g=ctx.createGain(); o.connect(g); g.connect(ctx.destination); o.frequency.value=880; o.type='sine'; const t=ctx.currentTime + i*0.6; g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.5,t+0.05); g.gain.exponentialRampToValueAtTime(0.0001,t+0.5); o.start(t); o.stop(t+0.55); } }catch(e){} }
+function showBigAlert(rem){
+  try{ if(navigator.vibrate) navigator.vibrate([500,200,500,200,500]); }catch(e){}
+  playAlertSound();
+  try{ if('Notification' in window && Notification.permission==='granted'){ new Notification('⏰ عافيتي - وقت ' + (rem.type||'تذكير'), { body: (rem.note||'') + ' - الساعة ' + rem.time, tag: 'afiaty-'+rem.id }); } }catch(e){}
+  let ov = document.getElementById('alertOverlay');
+  if(!ov){ ov=document.createElement('div'); ov.id='alertOverlay'; ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px'; document.body.appendChild(ov); }
+  ov.innerHTML = `<div style="background:#fff;border-radius:16px;padding:22px;max-width:420px;width:100%;text-align:center"><div style="font-size:48px">⏰</div><h2 style="margin:8px 0">وقت ${esc(rem.type||'تذكير')}</h2><p style="font-size:18px;font-weight:700">الساعة ${esc(rem.time)}</p><p class="muted">${esc(rem.note||'')}</p><button class="btn" style="width:100%;padding:14px;font-size:16px" onclick="window.dismissAlert()">تم ✅</button></div>`;
+  ov.style.display='flex';
+}
+window.dismissAlert = ()=>{ const ov=document.getElementById('alertOverlay'); if(ov) ov.style.display='none'; };
+function firedKey(remId, dateStr){ return 'afiaty_fired_'+dateStr+'_'+remId; }
+function hasFiredToday(remId){ try{ return localStorage.getItem(firedKey(remId, new Date().toISOString().slice(0,10)))==='1'; }catch(e){ return false; } }
+function markFired(remId){ try{ localStorage.setItem(firedKey(remId, new Date().toISOString().slice(0,10)), '1'); }catch(e){} }
+function saveRemindersBackup(){ try{ if(profile) localStorage.setItem('afiaty_reminders_'+profile.uid, JSON.stringify(Object.entries(cache.reminders||{}).map(([id,v])=>({id,...v})))); }catch(e){} }
+function loadRemindersBackup(){ try{ if(!profile) return []; const j=JSON.parse(localStorage.getItem('afiaty_reminders_'+profile.uid)||'[]'); return Array.isArray(j)?j:[]; }catch(e){ return []; } }
+function shouldFireNow(rem, now){
+  if(!rem || !rem.active || !rem.time) return false;
+  const hh = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  if(rem.time !== hh) return false;
+  if(hasFiredToday(rem.id)) return false;
+  if(rem.repeat==='مرة واحدة' && rem.firedOnce) return false;
+  if(rem.repeat==='أسبوعي'){ const created = rem.createdAt ? new Date(rem.createdAt).getDay() : null; if(created!==null && created!==now.getDay()) return false; }
+  return true;
+}
+async function checkReminders(){
+  if(!profile) return;
+  const list = Object.entries(cache.reminders||{}).map(([id,v])=>({id,...v}));
+  const src = list.length ? list : loadRemindersBackup();
+  if(!src.length) return;
+  const now = new Date();
+  for(const rem of src){ if(shouldFireNow(rem, now)){ markFired(rem.id); showBigAlert(rem); if(rem.repeat==='مرة واحدة'){ try{ await update(ref(db,'sehaty_reminders/'+profile.uid+'/'+rem.id), { active:false, firedOnce:true }); }catch(e){} } } }
+}
+function startReminderScheduler(){
+  if(_remTimer) clearInterval(_remTimer);
+  checkReminders();
+  _remTimer = setInterval(checkReminders, 20000);
+}
+window.testNotification = async ()=>{ const fake = { id:'test', type:'دواء', time: new Date().toLocaleTimeString('ar-IQ',{hour:'2-digit',minute:'2-digit'}), note:'هذا تنبيه تجريبي - إذا شفته والصوت اشتغل، معناها التنبيهات شغالة عندك' }; showBigAlert(fake); toast('هذا تنبيه تجريبي'); };
+window.enableNotifications = async ()=>{ await requestNotifPerm(); await renderPatient(); };
+function genCode(){ return 'DR-' + Math.floor(1000+Math.random()*9000); }
+function fmtTime(t){ try{ return new Date(t).toLocaleString('ar-IQ',{dateStyle:'medium',timeStyle:'short'}); }catch(e){ return t||''; } }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+async function loadProfile(uid){
+  const snap = await get(ref(db, 'sehaty_profiles/'+uid));
+  return snap.exists() ? snap.val() : null;
+}
+async function loadOwnerData(ownerUid){
+  const [m, med, rem, notes] = await Promise.all([
+    get(ref(db, 'sehaty_measurements/'+ownerUid)),
+    get(ref(db, 'sehaty_medicines/'+ownerUid)),
+    get(ref(db, 'sehaty_reminders/'+ownerUid)),
+    get(ref(db, 'sehaty_notes/'+ownerUid)),
+  ]);
+  cache.measurements = m.exists()? m.val() : {};
+  cache.medicines = med.exists()? med.val() : {};
+  cache.reminders = rem.exists()? rem.val() : {};
+  cache.notes = notes.exists()? notes.val() : {};
+}
+async function loadLink(){
+  if(!profile) return; const s = await get(ref(db, 'sehaty_links/'+profile.uid)); cache.link = s.exists()? s.val() : null;
+}
+async function loadDoctorData(){
+  const snap = await get(ref(db, 'sehaty_doctor_patients/'+profile.uid));
+  cache.doctorPatients = snap.exists()? snap.val() : {};
+  // requests for doctor
+  try{
+    const q = query(ref(db,'sehaty_requests'), orderByChild('doctorUid'), equalTo(profile.uid));
+    const rs = await get(q); cache.requests = rs.exists()? Object.entries(rs.val()).map(([id,v])=>({id,...v})) : [];
+  }catch(e){ cache.requests=[]; }
+}
+async function loadPatientRequests(){
+  try{
+    const q = query(ref(db,'sehaty_requests'), orderByChild('patientUid'), equalTo(profile.uid));
+    const rs = await get(q); cache.requests = rs.exists()? Object.entries(rs.val()).map(([id,v])=>({id,...v})) : [];
+  }catch(e){ cache.requests=[]; }
+}
+
+// ---------- AUTH VIEWS ----------
+function renderAuthChoice(){
+  currentTab='home';
+  appEl.innerHTML = `
+  <div class="card center">
+    <div style="font-size:44px">❤️</div><h1 style="font-size:24px">صحتك وطبيبك، بمكان واحد</h1>
+    <p class="muted">تابع قياساتك اليومية، وافهم حالتك من خلال تحليل فوري، وابق على تواصل مع طبيبك بسهولة.</p>
+    <div class="secure" style="text-align:right">🔒 بياناتك محمية: كل مريض يشوف بياناته فقط، والطبيب يشوفها بعد موافقتك.</div>
+    <div class="flex center" style="justify-content:center;margin-top:14px">
+      <button class="btn" onclick="window.goRegister()">تسجيل حساب جديد</button>
+      <button class="btn secondary" onclick="window.goLogin()">تسجيل دخول لحساب موجود</button>
+    </div>
+    <div style="margin-top:14px"><button class="btn" style="background:#b45309;width:100%;padding:14px;font-size:16px" onclick="window.goForgot()">🔑 نسيت كلمة السر؟ اضغط هنا للاسترجاع بالإيميل</button></div>
+    <p class="muted" style="margin-top:12px">الحسابات القديمة التجريبية انمسحت. إذا كان عندك حساب قديم، سوي حساب جديد هنا، راح ياخذ منك دقيقة.</p>
+  </div>
+  <div class="card"><h2>كيف تُحفظ بياناتك الآن؟</h2>
+  <p class="muted"><b>الحسابات:</b> الاسم، رقم الهاتف، الدور، الجنس، العمر، الحالات، التخصص، كود الطبيب. <b>كلمة السر لا تُحفظ أبدا داخل قاعدة البيانات.</b></p>
+  <p class="muted"><b>القياسات والأدوية والتنبيهات:</b> تُحفظ تحت رقم حسابك الخاص فقط، ولا يستطيع أي مستخدم آخر قراءتها.</p>
+  <p class="muted"><b>ملاحظات الطبيب:</b> يراها أنت وطبيبك المرتبط بك فقط.</p>
+  </div>`;
+  document.getElementById('headerActions').innerHTML = '';
+}
+
+function renderRegister(){
+  appEl.innerHTML = `
+  <div class="card">
+    <div class="flex"><button class="btn ghost" onclick="window.goChoice()">← عودة</button><h2 style="margin:0">تسجيل حساب جديد</h2></div>
+    <p class="muted">أدخل بياناتك الحقيقية. كلمة السر لازم تكون 6 أحرف على الأقل، لأن هذا شرط أمان Firebase. كلمة السر تنحفظ مشفرة وما تنعرض لأي أحد.</p>
+    <label class="label">الاسم الكامل</label><input id="r_name" placeholder="الاسم الكامل">
+    <label class="label">رقم الهاتف</label><input id="r_phone" placeholder="مثال: 07701234567" dir="ltr">
+    <p class="muted">الدخول بعدين راح يكون بنفس رقم الهاتف هذا بالضبط (0770...) + كلمة السر.</p>
+    <label class="label">البريد الإلكتروني لاسترجاع كلمة السر (مهم)</label><input id="r_email" placeholder="مثال: name@gmail.com" dir="ltr">
+    <p class="muted">إذا نسيت كلمة السر، راح نرسل لك رابط استرجاع على هذا الإيميل.</p>
+    <label class="label">كلمة السر (6 أحرف على الأقل)</label><input id="r_pass" type="password" placeholder="6 أحرف على الأقل">
+    <label class="label">تأكيد كلمة السر</label><input id="r_pass2" type="password" placeholder="أعد كتابة كلمة السر">
+    <label class="label">اختيار الدور</label>
+    <div class="flex"><button type="button" class="chip active" id="role_patient" onclick="window.setRole('patient')">مريض</button><button type="button" class="chip" id="role_doctor" onclick="window.setRole('doctor')">طبيب</button></div>
+    <div id="patientFields">
+      <div class="grid2"><div><label class="label">العمر</label><input id="r_age" placeholder="مثال: 34"></div><div><label class="label">الجنس</label><select id="r_gender"><option>ذكر</option><option>أنثى</option></select></div></div>
+      <label class="label">الحالات المزمنة</label><div class="flex" id="condWrap">
+        ${['ضغط','سكري','ربو','قلب','لا توجد'].map(c=>`<label class="chip"><input type="checkbox" value="${c}" class="cond"> ${c}</label>`).join('')}
+      </div>
+    </div>
+    <div id="doctorFields" style="display:none">
+      <label class="label">التخصص</label><select id="r_spec"><option>باطنية</option><option>قلب</option><option>سكري وغدد</option><option>أطفال</option><option>نسائية</option><option>عام</option><option>أخرى</option></select>
+      <label class="label">اسم العيادة أو رقمها المهني</label><input id="r_clinic" placeholder="اسم العيادة أو رقمها المهني">
+      <p class="muted">سيتم توليد كود ربط فريد لحسابك بعد إنشائه، وتجده داخل ملفك كطبيب.</p>
+    </div>
+    <div style="margin-top:16px" class="flex"><button class="btn" id="btnReg" onclick="window.doRegister()">إنشاء الحساب والدخول</button><button class="btn ghost" onclick="window.goLogin()">لدي حساب بالفعل — تسجيل دخول</button></div>
+    <p id="regErr" class="muted" style="color:#dc2626"></p>
+  </div>`;
+}
+function renderLogin(){
+  appEl.innerHTML = `
+  <div class="card">
+    <div class="flex"><button class="btn ghost" onclick="window.goChoice()">← عودة</button><h2 style="margin:0">تسجيل دخول</h2></div>
+    <p class="muted">ادخل برقم الهاتف وكلمة السر اللي سجلت بيهن. الدخول بالاسم انلغي لأسباب أمنية، لأن كان يسمح لأي شخص يجرب أسماء الآخرين.</p>
+    <label class="label">رقم الهاتف</label><input id="l_phone" placeholder="07701234567" dir="ltr">
+    <label class="label">كلمة السر</label><input id="l_pass" type="password" placeholder="كلمة السر">
+    <div style="margin-top:16px" class="flex"><button class="btn" id="btnLogin" onclick="window.doLogin()">دخول</button><button class="btn ghost" onclick="window.goRegister()">إنشاء حساب جديد</button></div>
+    <div id="forgotBox" style="display:block;margin-top:18px;border:1px solid #fcd34d;background:#fffbeb;padding:14px;border-radius:14px">
+      <h3 style="margin:0 0 8px">🔑 نسيت كلمة السر؟</h3>
+      <p class="muted">اكتب رقم هاتفك اللي سجلت بيه (0770...). راح نبحث عن إيميل الاسترجاع ونرسل لك رابط على إيميلك.</p>
+      <label class="label">رقم الهاتف المسجل بيه</label><input id="f_phone" placeholder="07701234567" dir="ltr">
+      <button class="btn" id="btnForgot" style="background:#b45309;margin-top:10px" onclick="window.doForgot()">إرسال رابط الاسترجاع إلى إيميلي</button>
+      <p id="forgotMsg" class="muted"></p>
+    </div>
+    <p id="loginErr" class="muted" style="color:#dc2626"></p>
+  </div>`;
+}
+
+// ---------- ANALYSIS ----------
+function analyze(measurements){
+  const arr = Object.values(measurements||{}).sort((a,b)=> new Date(b.time)-new Date(a.time));
+  if(!arr.length) return ['أضف قياسا جديدا لكي يظهر التحليل هنا.'];
+  const out=[]; const last = arr[0];
+  if(last.type==='ضغط' && last.sys){
+    if(last.sys>=180 || last.dia>=120) out.push('انتبه: الضغط مرتفع جدا بشكل حرج. اجلس واسترح 15 دقيقة ثم أعد القياس، وتواصل مع طبيبك.');
+    else if(last.sys>=140 || last.dia>=90) out.push('الضغط أعلى من النطاق العام. قلل الملح اليوم، وامش مشيا خفيفا إذا كان ذلك مناسبا لك.');
+    else if(last.sys<90 || last.dia<60) out.push('الضغط أقل من النطاق العام. لا تقم فجأة، اشرب ماء، وأعد القياس بعد قليل.');
+    else out.push('الضغط ضمن النطاق العام.');
+  }
+  if(last.type==='سكر' && last.value){
+    if(last.value>=250) out.push('قراءة السكر حرجة جدا. تواصل مع طبيبك.');
+    else if(last.value<70) out.push('السكر أقل من النطاق العام. اجلس، وتناول شيئا حلوا سريع الامتصاص إذا كان طبيبك قد نصحك بذلك من قبل، وأعد القياس بعد 15 دقيقة.');
+    else if(last.value>180) out.push('السكر أعلى من النطاق العام. تجنب الحلويات الآن، واشرب ماء، وسجل القراءة التالية.');
+    else out.push('السكر ضمن النطاق العام.');
+  }
+  out.push('ملاحظة ثابتة: هذا التحليل تعليمي عام من بيانات أدخلتها أنت، وليس تشخيصا، وقرار العلاج يبقى لطبيبك.');
+  return out;
+}
+
+// ---------- PATIENT ----------
+function patientTabs(){
+  return `<div class="tabs">
+    <button class="tab ${currentTab==='home'?'active':''}" onclick="window.pTab('home')">الرئيسية</button>
+    <button class="tab ${currentTab==='meas'?'active':''}" onclick="window.pTab('meas')">القياسات</button>
+    <button class="tab ${currentTab==='meds'?'active':''}" onclick="window.pTab('meds')">الأدوية</button>
+    <button class="tab ${currentTab==='rems'?'active':''}" onclick="window.pTab('rems')">التنبيهات</button>
+    <button class="tab ${currentTab==='report'?'active':''}" onclick="window.pTab('report')">تقريري</button>
+    <button class="tab ${currentTab==='profile'?'active':''}" onclick="window.pTab('profile')">ملفي</button>
+  </div>`;
+}
+async function renderPatient(){
+  document.getElementById('headerActions').innerHTML = `<span class="badge">مريض • ${esc(profile.name)}</span> <button class="btn small secondary" onclick="window.doLogout()">تسجيل خروج</button>`;
+  if(_fast && _loaded){ _fast=false; } else { await Promise.all([loadOwnerData(profile.uid), loadLink(), loadPatientRequests()]); _loaded=true; }
+  const measArr = Object.entries(cache.measurements).map(([id,v])=>({id,...v})).sort((a,b)=> new Date(b.time)-new Date(a.time));
+  const medsArr = Object.entries(cache.medicines).map(([id,v])=>({id,...v}));
+  const remsArr = Object.entries(cache.reminders).map(([id,v])=>({id,...v}));
+  const notesArr = Object.entries(cache.notes).map(([id,v])=>({id,...v})).sort((a,b)=> new Date(b.date||b.createdAt||0)-new Date(a.date||a.createdAt||0));
+  const analysis = analyze(cache.measurements);
+  let html = patientTabs();
+  if(currentTab==='home'){
+    html += `<div class="card"><h2>أهلا ${esc(profile.name)}، هذه بياناتك فقط</h2>
+    <p class="muted">العمر: ${esc(profile.age||'غير محدد')} • الجنس: ${esc(profile.gender||'')} • الحالات: ${esc((profile.conditions||[]).join('، ')||'لا توجد')} • الهاتف: <span dir="ltr">${esc(profile.phone)}</span></p>
+    <div class="secure">بياناتك محمية. لا أحد غيرك يراها إلا طبيبك المرتبط بك بعد قبول طلب الربط.</div></div>`;
+    // doctor link
+    html += `<div class="card"><h2>طبيبي</h2>`;
+    if(cache.link && cache.link.doctorUid){
+      html += `<p><b>${esc(cache.link.doctorName||'طبيبك')}</b> • كود: ${esc(cache.link.doctorCode||'')} • واتساب: <span dir="ltr">${esc(cache.link.doctorPhone||'')}</span></p>
+      <div class="flex"><button class="btn small danger" onclick="window.unlinkDoctor()">إلغاء الربط</button><button class="btn small secondary" onclick="window.pTab('profile')">تعديل ملفي</button></div>`;
+    } else {
+      const pending = cache.requests.find(r=>r.status==='pending');
+      if(pending) html += `<div class="alert">طلب الربط قيد الانتظار لدى الطبيب بكود ${esc(pending.doctorCode)}، انتظر قبوله.</div>`;
+      else html += `<p class="muted">لا يوجد طبيب مرتبط بك الآن. أدخل كود طبيب مسجل لربط حسابك به.</p>
+      <label class="label">أدخل كود الطبيب الجديد</label><input id="linkCode" placeholder="مثال: DR-1234">
+      <div style="margin-top:10px"><button class="btn" onclick="window.sendLinkRequest()">تأكيد الربط</button></div>`;
+    }
+    html += `</div>`;
+    html += `<div class="card"><h2>محلل الحالة الصحية</h2><p class="muted">نتيجة تعليمية عامة مبنية على القياسات المدخلة.</p>${analysis.map(a=>`<p>• ${esc(a)}</p>`).join('')}
+    <p class="muted">آخر قياس: ${measArr[0]? esc(measArr[0].type)+' • '+fmtTime(measArr[0].time) : 'لا يوجد قياس'}</p></div>`;
+    html += `<div class="card"><h2>آخر القياسات</h2>${measArr.slice(0,5).map(m=>`<div class="item"><b>${esc(m.type)}</b> • ${m.type==='ضغط'? esc(m.sys)+'/'+esc(m.dia)+' • نبض '+esc(m.pulse||'') : esc(m.value||'')+' '+(m.unit||'')} • ${fmtTime(m.time)}<div class="muted">${esc(m.notes||'')}</div></div>`).join('') || '<p class="muted">لا يوجد قياس بعد — أضف أول قياس من تبويب القياسات.</p>'}</div>`;
+    html += `<div class="card"><h2>ملاحظات طبيبك</h2>${notesArr.slice(0,5).map(n=>`<div class="item"><b>${esc(n.doctorName||'طبيبك')}</b> • ${fmtTime(n.date||n.createdAt)}<p>${esc(n.text)}</p></div>`).join('') || '<p class="muted">لا توجد ملاحظات طبية بعد.</p>'}</div>`;
+  }
+  if(currentTab==='meas'){
+    html += `<div class="card"><h2>إضافة قياس جديد</h2>
+    <label class="label">نوع القياس</label><select id="m_type" onchange="window.onMeasType()"><option>ضغط</option><option>سكر</option><option>نبض</option><option>أكسجين</option><option>حرارة</option><option>وزن</option></select>
+    <div id="measFields"></div>
+    <label class="label">وقت القياس</label><input id="m_time" type="datetime-local">
+    <label class="label">ملاحظات</label><input id="m_notes" placeholder="مثال: بعد المشي">
+    <div style="margin-top:12px"><button class="btn" onclick="window.addMeasurement()">حفظ القياس</button></div></div>`;
+    html += `<div class="card"><h2>سجل القياسات (${measArr.length})</h2>${measArr.map(m=>`<div class="item"><div class="between"><b>${esc(m.type)}</b><span class="muted">${fmtTime(m.time)}</span></div><p>${m.type==='ضغط'? `الانقباضي ${esc(m.sys)} • الانبساطي ${esc(m.dia)} • النبض ${esc(m.pulse||'')}` : `القيمة ${esc(m.value)} ${esc(m.sugarType||'')}`} • ${esc(m.notes||'')}</p><div class="flex"><button class="btn small danger" onclick="window.delMeas('${m.id}')">حذف</button></div></div>`).join('') || '<p class="muted">لا توجد قياسات بعد.</p>'}</div>`;
+  }
+  if(currentTab==='meds'){
+    html += `<div class="card"><h2>إضافة دواء</h2><label class="label">اسم الدواء</label><input id="med_name" placeholder="اسم الدواء"><label class="label">الجرعة</label><input id="med_dose" placeholder="مثال: حبة واحدة"><label class="label">الوقت</label><input id="med_time" type="time"><label class="label">ملاحظة</label><input id="med_note" placeholder="مثال: قبل الفطور"><div style="margin-top:12px"><button class="btn" onclick="window.addMedicine()">إضافة الدواء</button></div></div>`;
+    html += `<div class="card"><h2>الأدوية</h2>${medsArr.map(m=>`<div class="item"><b>${esc(m.name)}</b> • ${esc(m.dose||'')} • الساعة ${esc(m.time||'')}<div class="muted">${esc(m.note||'')}</div><div class="flex" style="margin-top:8px"><button class="btn small ${m.takenToday?'secondary':' '}" onclick="window.toggleTaken('${m.id}', ${m.takenToday?0:1})">${m.takenToday?'تم أخذ الدواء اليوم ✓':'تسجيل: تم أخذ الدواء اليوم'}</button><button class="btn small danger" onclick="window.delMed('${m.id}')">حذف</button></div></div>`).join('') || '<p class="muted">لا توجد أدوية مسجلة بعد.</p>'}</div>`;
+  }
+  if(currentTab==='rems'){
+    const perm = notifPerm();
+    const appPush = IS_APP && window.median && median.onesignal && typeof median.onesignal.register==='function';
+    const permBadge = (IS_APP && !appPush) ? '<span class="badge warn">تنبيهات أثناء فتح التطبيق فقط</span>' : (IS_APP ? (_pushState.includes('✅') ? '<span class="badge" id="pushBadge">الإشعارات مفعّلة</span>' : '<span class="badge warn" id="pushBadge">قيد ربط الجهاز</span>') : (perm==='granted' ? '<span class="badge">الإشعارات مفعّلة</span>' : '<span class="badge warn">الإشعارات غير مفعّلة</span>'));
+    html += `<div class="card"><div class="between"><h2 style="margin:0">التنبيهات</h2>${permBadge}</div><div class="flex" style="margin-top:12px"><button class="btn small secondary" onclick="window.enablePush()">تفعيل الإشعارات</button><button class="btn small secondary" onclick="window.testNotification()">تجربة التنبيه 🔊</button></div><p class="muted" id="pushState" style="margin:10px 0 0">${esc(_pushState)}</p></div>`;
+    html += `<div class="card"><h2>إضافة تذكير</h2><label class="label">نوع التذكير</label><select id="rem_type"><option>دواء</option><option>قياس</option></select><label class="label">الوقت</label><input id="rem_time" type="time"><label class="label">التكرار</label><select id="rem_repeat"><option>يومي</option><option>أسبوعي</option><option>مرة واحدة</option></select><label class="label">ملاحظة</label><input id="rem_note" placeholder="مثال: قبل الفطور"><div style="margin-top:12px"><button class="btn" onclick="window.addReminder()">إضافة التذكير</button></div></div>`;
+    html += `<div class="card"><h2>قائمة التنبيهات</h2>${remsArr.map(r=>`<div class="item"><b>${esc(r.type)}</b> • ${esc(r.time)} • ${esc(r.repeat||'')} • ${r.active?'<span class="badge">مفعل</span>':'<span class="badge warn">متوقف</span>'}<div class="muted">${esc(r.note||'')}</div><div class="flex" style="margin-top:8px"><button class="btn small secondary" onclick="window.toggleRem('${r.id}', ${r.active?0:1})">${r.active?'إيقاف':'تفعيل'}</button><button class="btn small danger" onclick="window.delRem('${r.id}')">حذف</button></div></div>`).join('') || '<p class="muted">لا توجد تنبيهات بعد.</p>'}</div>`;
+  }
+  if(currentTab==='report'){
+    const last30 = measArr.filter(m=> new Date(m.time) > new Date(Date.now()-30*24*3600*1000));
+    const bps = last30.filter(m=>m.type==='ضغط'); const sugars = last30.filter(m=>m.type==='سكر');
+    const avgBp = bps.length? Math.round(bps.reduce((s,m)=>s+Number(m.sys||0),0)/bps.length)+'/'+Math.round(bps.reduce((s,m)=>s+Number(m.dia||0),0)/bps.length) : 'لا يوجد';
+    const avgSugar = sugars.length? Math.round(sugars.reduce((s,m)=>s+Number(m.value||0),0)/sugars.length) : 'لا يوجد';
+    const reportText = `تقرير عافيتي - ${profile.name}\nمتوسط الضغط (30 يوم): ${avgBp}\nمتوسط السكر (30 يوم): ${avgSugar}\nعدد القياسات (30 يوم): ${last30.length}\nآخر تحليل: ${analysis[0]}`;
+    html += `<div class="card"><h2>تقريري ومشاركة واتساب</h2><p class="muted">أنشئ ملخص آخر 30 يوما، ثم شاركه مع طبيبك.</p><div class="item"><p><b>متوسط الضغط:</b> ${esc(avgBp)}</p><p><b>متوسط السكر:</b> ${esc(avgSugar)}</p><p><b>عدد القياسات:</b> ${last30.length}</p><p><b>آخر تحليل:</b> ${esc(analysis[0])}</p></div>
+    <div class="flex"><button class="btn" onclick="window.copyReport(\`${esc(reportText.replace(/`/g,''))}\`)">نسخ نص التقرير</button>${cache.link?`<a class="btn secondary" style="text-decoration:none;padding:12px 18px;border-radius:10px" target="_blank" href="https://wa.me/${(cache.link.doctorPhone||'').replace(/\D/g,'')}?text=${encodeURIComponent(reportText)}">مشاركة على واتساب مع طبيبي</a>`:''}</div>
+    <label class="label">مشاركة واتساب برقم آخر</label><input id="waNum" placeholder="أدخل رقم الواتساب مع مفتاح الدولة"><button class="btn secondary" style="margin-top:8px" onclick="window.shareWa(\`${esc(reportText.replace(/`/g,''))}\`)">إرسال إلى هذا الرقم</button></div>`;
+  }
+  if(currentTab==='profile'){
+    html += `<div class="card"><h2>ملفي</h2>
+    <label class="label">الاسم</label><input id="p_name" value="${esc(profile.name)}">
+    <label class="label">الهاتف</label><input value="${esc(profile.phone)}" disabled><p class="muted">رقم الهاتف هو اسم الدخول، لا يمكن تغييره هنا. إذا غيرت رقمك، سوي حساب جديد.</p>
+    <label class="label">العمر</label><input id="p_age" value="${esc(profile.age||'')}">
+    <label class="label">الجنس</label><select id="p_gender"><option ${profile.gender==='ذكر'?'selected':''}>ذكر</option><option ${profile.gender==='أنثى'?'selected':''}>أنثى</option></select>
+    <label class="label">الحالات المزمنة (مفصولة بفاصلة)</label><input id="p_conds" value="${esc((profile.conditions||[]).join('، '))}">
+    <div style="margin-top:12px"><button class="btn" onclick="window.saveProfile()">حفظ تعديل ملفي</button></div></div>`;
+    html += `<div class="card"><h2>تغيير كلمة السر</h2><p class="muted">يجب أن تكون داخل حسابك، وكلمة السر الجديدة 6 أحرف على الأقل.</p><label class="label">كلمة السر الجديدة</label><input id="newPass" type="password" placeholder="كلمة السر الجديدة"><button class="btn secondary" style="margin-top:10px" onclick="window.changePass()">حفظ كلمة السر الجديدة</button></div>`;
+    html += `<div class="card"><h2>حذف الحساب</h2><p class="muted">حذف حسابي نهائيا سيحذف: ملفك الشخصي، كل قياساتك وأدويتك وتنبيهاتك، فك ارتباطك من طبيبك.</p><label class="label">اكتب كلمة حذف بالضبط للتأكيد</label><input id="delWord" placeholder="اكتب كلمة حذف"><button class="btn danger" style="margin-top:10px" onclick="window.deleteAccount()">حذف حسابي نهائيا</button></div>`;
+  }
+  appEl.innerHTML = html;
+  if(currentTab==='meas') window.onMeasType();
+}
+
+// ---------- DOCTOR ----------
+function doctorTabs(){
+  return `<div class="tabs">
+    <button class="tab ${currentTab==='home'?'active':''}" onclick="window.dTab('home')">الرئيسية</button>
+    <button class="tab ${currentTab==='patients'?'active':''}" onclick="window.dTab('patients')">مرضاي</button>
+    <button class="tab ${currentTab==='requests'?'active':''}" onclick="window.dTab('requests')">طلبات الربط ${cache.requests.filter(r=>r.status==='pending').length? `(${cache.requests.filter(r=>r.status==='pending').length})`:''}</button>
+    <button class="tab ${currentTab==='profile'?'active':''}" onclick="window.dTab('profile')">ملفي كطبيب</button>
+  </div>`;
+}
+async function renderDoctor(){
+  document.getElementById('headerActions').innerHTML = `<span class="badge">طبيب • ${esc(profile.name)}</span> <button class="btn small secondary" onclick="window.doLogout()">تسجيل خروج</button>`;
+  if(_fast && _loadedD){ _fast=false; } else { await loadDoctorData(); _loadedD=true; }
+  let html = doctorTabs();
+  const patientsUids = Object.keys(cache.doctorPatients||{});
+  // load patient profiles for list
+  let patientProfiles = {};
+  (await Promise.all(patientsUids.map(uid=>loadProfile(uid).then(p=>[uid,p]).catch(()=>[uid,null])))).forEach(([uid,p])=>{ if(p) patientProfiles[uid]=p; });
+  if(currentTab==='home'){
+    html += `<div class="card"><h2>أهلا د. ${esc(profile.name)}</h2><p class="muted">التخصص: ${esc(profile.specialty||'')} • العيادة: ${esc(profile.clinic||'')} • الهاتف: <span dir="ltr">${esc(profile.phone)}</span></p></div>`;
+    html += `<div class="card"><h2>بطاقة الطبيب وكود الربط</h2><p class="muted">شارك هذا الكود مع مرضاك لربط حساباتهم بك. الربط يعمل فقط مع هذا الكود المسجل لحسابك.</p><div style="font-size:28px;font-weight:900;letter-spacing:2px" dir="ltr">${esc(profile.code||'')}</div><div class="flex" style="margin-top:10px"><button class="btn small" onclick="window.copyText('${esc(profile.code||'')}')">نسخ الكود</button><a class="btn small secondary" style="text-decoration:none;padding:8px 12px;border-radius:10px" target="_blank" href="https://wa.me/?text=${encodeURIComponent('أهلا، هذا كود الربط الخاص بي في تطبيق عافيتي: '+(profile.code||'')+'. أدخل الكود في حسابك لربط ملفك معي.')}">مشاركة الكود على واتساب</a></div></div>`;
+    html += `<div class="stat"><div><b>${patientsUids.length}</b><span>عدد مرضاي</span></div><div><b>${cache.requests.filter(r=>r.status==='pending').length}</b><span>طلبات بانتظار القبول</span></div><div><b>${Object.keys(cache.doctorPatients).length}</b><span>مرضى مرتبطون</span></div></div>`;
+    html += `<div class="card"><h2>مرضاي</h2>${patientsUids.length? patientsUids.map(uid=>{ const p=patientProfiles[uid]; return `<div class="item"><b>${esc(p?.name||'مريض')}</b> • ${esc(p?.phone||'')} • الحالات: ${esc((p?.conditions||[]).join('، ')||'لا توجد')}<div style="margin-top:8px"><button class="btn small" onclick="window.openPatient('${uid}')">عرض الملف الكامل</button></div></div>`}).join('') : '<p class="muted">لا يوجد مرضى مرتبطون بعد، شارك كودك ليتمكن المرضى من الربط بك.</p>'}</div>`;
+  }
+  if(currentTab==='patients'){
+    if(!selectedPatientUid) html += `<div class="card"><h2>مرضاي (${patientsUids.length})</h2><input id="searchPat" placeholder="ابحث باسم المريض" oninput="window.filterPatients()"><div id="patList">${patientsUids.map(uid=>{ const p=patientProfiles[uid]; return `<div class="item patItem" data-name="${esc(p?.name||'').toLowerCase()}"><b>${esc(p?.name||'')}</b> • ${esc(p?.phone||'')} • العمر: ${esc(p?.age||'')} • الحالات: ${esc((p?.conditions||[]).join('، ')||'')}<div class="flex" style="margin-top:8px"><button class="btn small" onclick="window.openPatient('${uid}')">عرض الملف الكامل</button><button class="btn small danger" onclick="window.unlinkPatient('${uid}')">إلغاء ربط المريض</button></div></div>`}).join('') || '<p class="muted">لا يوجد مرضى بعد.</p>'}</div></div>`;
+    if(selectedPatientUid){
+      const p = patientProfiles[selectedPatientUid] || selectedPatientProfile;
+      if(p){
+        try{ await loadOwnerData(selectedPatientUid); }
+        catch(e){ console.error(e); toast('لا توجد صلاحية لقراءة بيانات المريض (راجع قواعد Firebase): '+(e.code||e.message)); cache.measurements={}; cache.medicines={}; cache.reminders={}; cache.notes={}; }
+        const measArr = Object.entries(cache.measurements).map(([id,v])=>({id,...v})).sort((a,b)=> new Date(b.time)-new Date(a.time));
+        const medsArr = Object.entries(cache.medicines).map(([id,v])=>({id,...v}));
+        const notesArr = Object.entries(cache.notes).map(([id,v])=>({id,...v})).sort((a,b)=> new Date(b.date||b.createdAt||0)-new Date(a.date||a.createdAt||0));
+        html += `<div class="card"><h2>ملف المريض: ${esc(p.name)}</h2><p class="muted">الهاتف: <span dir="ltr">${esc(p.phone)}</span> • العمر: ${esc(p.age||'')} • الجنس: ${esc(p.gender||'')} • الحالات: ${esc((p.conditions||[]).join('، ')||'')}</p><button class="btn small ghost" onclick="window.closePatient()">إغلاق</button>
+        <h3>قياساته</h3>${measArr.map(m=>`<div class="item"><b>${esc(m.type)}</b> • ${m.type==='ضغط'? esc(m.sys)+'/'+esc(m.dia) : esc(m.value||'')} • ${fmtTime(m.time)} • ${esc(m.notes||'')}</div>`).join('') || '<p class="muted">لا توجد قياسات لهذا المريض بعد.</p>'}
+        <h3>أدويته</h3>${medsArr.map(m=>`<div class="item"><b>${esc(m.name)}</b> • ${esc(m.dose||'')} • ${esc(m.time||'')}</div>`).join('') || '<p class="muted">لا توجد أدوية مسجلة.</p>'}
+        <h3>ملاحظات الطبيب</h3>${notesArr.map(n=>`<div class="item"><b>${esc(n.doctorName||'')}</b> • ${fmtTime(n.date||n.createdAt)}<p>${esc(n.text)}</p><button class="btn small danger" onclick="window.delNote('${selectedPatientUid}','${n.id}')">حذف</button></div>`).join('') || '<p class="muted">لا توجد ملاحظات بعد.</p>'}
+        <h3>إضافة ملاحظة طبية</h3><textarea id="noteText" placeholder="اكتب ملاحظتك الطبية هنا"></textarea><button class="btn" style="margin-top:8px" onclick="window.addNote('${selectedPatientUid}')">حفظ الملاحظة</button>
+        <h3>إضافة قياس نيابة عن المريض</h3><label class="label">نوع القياس</label><select id="dm_type"><option>ضغط</option><option>سكر</option><option>نبض</option><option>أكسجين</option><option>حرارة</option><option>وزن</option></select><input id="dm_sys" placeholder="الانقباضي (للضغط فقط)"><input id="dm_dia" placeholder="الانبساطي (للضغط فقط)" style="margin-top:8px"><input id="dm_val" placeholder="القيمة (لغير الضغط)" style="margin-top:8px"><input id="dm_time" type="datetime-local" style="margin-top:8px"><button class="btn secondary" style="margin-top:8px" onclick="window.doctorAddMeas('${selectedPatientUid}')">إضافة قياس للمريض</button>
+        <h3>إضافة دواء للمريض</h3><input id="dm_med" placeholder="اسم الدواء"><input id="dm_dose" placeholder="الجرعة" style="margin-top:8px"><button class="btn secondary" style="margin-top:8px" onclick="window.doctorAddMed('${selectedPatientUid}')">إضافة دواء للمريض</button>
+        </div>`;
+      } else {
+        html += `<div class="card"><p class="muted">تعذر تحميل ملف هذا المريض.</p><button class="btn small ghost" onclick="window.closePatient()">رجوع</button></div>`;
+      }
+    }
+  }
+  if(currentTab==='requests'){
+    const pend = cache.requests.filter(r=>r.status==='pending');
+    html += `<div class="card"><h2>طلبات الربط</h2>${pend.map(r=>`<div class="item"><b>${esc(r.patientName)}</b> • <span dir="ltr">${esc(r.patientPhone||'')}</span> • كود: ${esc(r.doctorCode)} • ${fmtTime(r.createdAt)}<div class="flex" style="margin-top:8px"><button class="btn small" onclick="window.acceptReq('${r.id}')">قبول</button><button class="btn small danger" onclick="window.rejectReq('${r.id}')">رفض</button></div></div>`).join('') || '<p class="muted">لا توجد طلبات ربط الآن. شارك كودك ليتمكن المرضى من الربط بك.</p>'}</div>`;
+    const done = cache.requests.filter(r=>r.status!=='pending');
+    if(done.length) html += `<div class="card"><h2>طلبات سابقة</h2>${done.map(r=>`<div class="item">${esc(r.patientName)} • ${esc(r.status)} • ${fmtTime(r.createdAt)}</div>`).join('')}</div>`;
+  }
+  if(currentTab==='profile'){
+    html += `<div class="card"><h2>ملفي كطبيب</h2><label class="label">الاسم</label><input id="d_name" value="${esc(profile.name)}"><label class="label">التخصص</label><input id="d_spec" value="${esc(profile.specialty||'')}"><label class="label">العيادة</label><input id="d_clinic" value="${esc(profile.clinic||'')}"><label class="label">الهاتف</label><input value="${esc(profile.phone)}" disabled><div style="margin-top:12px"><button class="btn" onclick="window.saveDoctorProfile()">حفظ تعديل ملفي</button></div></div>`;
+    html += `<div class="card"><h2>تغيير كلمة السر</h2><label class="label">كلمة السر الجديدة</label><input id="newPassD" type="password" placeholder="كلمة السر الجديدة"><button class="btn secondary" style="margin-top:10px" onclick="window.changePassDoctor()">حفظ كلمة السر الجديدة</button></div>`;
+    html += `<div class="card"><h2>حذف الحساب</h2><p class="muted">سيتم حذف ملفك كطبيب وملاحظاتك، وفك ارتباط مرضاك منك، مع بقاء ملفاتهم وبدون طبيب. سيظهر لمرضاك أن طبيبهم السابق حذف حسابه.</p><label class="label">اكتب كلمة حذف بالضبط</label><input id="delWordD" placeholder="اكتب كلمة حذف"><button class="btn danger" style="margin-top:10px" onclick="window.deleteDoctorAccount()">حذف حسابي نهائيا</button></div>`;
+  }
+  appEl.innerHTML = html;
+}
+
+// ---------- GLOBAL ACTIONS ----------
+window.goChoice = ()=>{ renderAuthChoice(); };
+window.goRegister = ()=>{ renderRegister(); window._role='patient'; };
+window.goLogin = ()=>{ renderLogin(); };
+window.setRole = (r)=>{ window._role=r; document.getElementById('role_patient').className='chip '+(r==='patient'?'active':''); document.getElementById('role_doctor').className='chip '+(r==='doctor'?'active':''); document.getElementById('patientFields').style.display=r==='patient'?'block':'none'; document.getElementById('doctorFields').style.display=r==='doctor'?'block':'none'; };
+window.doRegister = async ()=>{
+  const name=document.getElementById('r_name').value.trim(); const phone=document.getElementById('r_phone').value.trim();
+  const pass=document.getElementById('r_pass').value; const pass2=document.getElementById('r_pass2').value;
+  const recoveryEmail=(document.getElementById('r_email')?.value||'').trim().toLowerCase();
+  const errEl=document.getElementById('regErr'); const btnReg=document.getElementById('btnReg');
+  if(!name||!phone){ errEl.textContent='أدخل الاسم الكامل ورقم الهاتف أولا'; return; }
+  if(recoveryEmail && !isValidEmail(recoveryEmail)){ errEl.textContent='صيغة الإيميل غير صحيحة، مثال: name@gmail.com'; return; }
+  if(!pass||pass.length<6){ errEl.textContent='اختر كلمة سر من 6 أحرف على الأقل'; return; }
+  if(pass!==pass2){ errEl.textContent='كلمة السر وتأكيدها غير متطابقين'; return; }
+  const role = window._role||'patient';
+  const authEmail = recoveryEmail ? recoveryEmail : derivedEmail(phone);
+  if(btnReg){ btnReg.disabled=true; btnReg.textContent='جارٍ إنشاء الحساب...'; }
+  if(errEl) errEl.textContent='جارٍ إنشاء الحساب...';
+  try{
+    const cred = await createUserWithEmailAndPassword(auth, authEmail, pass);
+    const uid = cred.user.uid;
+    let prof = { uid, name, phone: normalizePhone(phone), role, createdAt: new Date().toISOString(), recoveryEmail: recoveryEmail||'', authEmail };
+    if(role==='patient'){ prof.age = document.getElementById('r_age').value.trim()||''; prof.gender = document.getElementById('r_gender').value; prof.conditions = Array.from(document.querySelectorAll('.cond:checked')).map(c=>c.value); }
+    else { prof.specialty = document.getElementById('r_spec').value; prof.clinic = document.getElementById('r_clinic').value.trim(); prof.code = genCode(); }
+    const saves = [ set(ref(db,'sehaty_profiles/'+uid), prof), savePhoneMapping(phone, authEmail, uid, recoveryEmail) ];
+    if(role==='doctor') saves.push(set(ref(db,'sehaty_doctor_codes/'+prof.code), { uid, name, specialty: prof.specialty, clinic: prof.clinic||'' }));
+    await Promise.all(saves);
+    profile=prof; toast(recoveryEmail ? 'تم إنشاء الحساب بنجاح' : 'تم إنشاء الحساب بنجاح');
+    if(role==='patient'){ currentTab='home'; await renderPatient(); } else { currentTab='home'; await renderDoctor(); }
+  }catch(e){
+    console.error(e);
+    if(btnReg){ btnReg.disabled=false; btnReg.textContent='إنشاء الحساب والدخول'; }
+    if(e.code==='auth/email-already-in-use') errEl.textContent = recoveryEmail ? 'هذا الإيميل مستخدم لحساب آخر.' : 'هذا الرقم مسجل مسبقا، سجل دخول';
+    else if(e.code==='auth/invalid-email') errEl.textContent='رقم الهاتف غير صحيح';
+    else if(e.code==='auth/weak-password') errEl.textContent='كلمة السر ضعيفة';
+    else if(e.code==='auth/network-request-failed') errEl.textContent='تعذر الوصول إلى Firebase، تأكد من الإنترنت';
+    else errEl.textContent='تعذر إنشاء الحساب: '+(e.message||'');
+  }
+};
+window.doLogin = async ()=>{
+  const phone=document.getElementById('l_phone').value.trim(); const pass=document.getElementById('l_pass').value;
+  const errEl=document.getElementById('loginErr'); const btn=document.getElementById('btnLogin');
+  if(!phone||!pass){ errEl.textContent='أدخل رقم الهاتف وكلمة السر'; return; }
+  if(btn){ btn.disabled=true; btn.textContent='جارٍ الدخول...'; }
+  if(errEl) errEl.textContent='جارٍ التحقق...';
+  try{
+    const m = await lookupAuthEmailByPhone(phone).catch(()=>null);
+    const authEmail = (m && m.email) ? m.email : derivedEmail(phone);
+    try{ await signInWithEmailAndPassword(auth, authEmail, pass); }
+    catch(e){ if(m && m.email && m.email!==derivedEmail(phone) && e.code!=='auth/too-many-requests'){ await signInWithEmailAndPassword(auth, derivedEmail(phone), pass); } else throw e; }
+    if(errEl) errEl.textContent='تم الدخول بنجاح...';
+  }catch(e){
+    if(btn){ btn.disabled=false; btn.textContent='دخول'; }
+    if(e.code==='auth/invalid-credential' || e.code==='auth/user-not-found' || e.code==='auth/wrong-password') errEl.textContent='رقم الهاتف أو كلمة السر غير صحيحة. إذا نسيت كلمة السر استخدم صندوق الاسترجاع بالأسفل.';
+    else if(e.code==='auth/too-many-requests') errEl.textContent='محاولات كثيرة، انتظر 5 دقائق';
+    else errEl.textContent='تعذر الدخول: '+(e.message||'');
+    return;
+  }
+  if(btn){ btn.disabled=false; btn.textContent='دخول'; }
+};
+window.showForgot = ()=>{ const b=document.getElementById('forgotBox'); if(b){ b.style.display='block'; b.scrollIntoView({behavior:'smooth'}); } };
+window.goForgot = ()=>{ renderLogin(); setTimeout(()=>{ const b=document.getElementById('forgotBox'); if(b){ b.style.display='block'; b.scrollIntoView({behavior:'smooth'}); } const f=document.getElementById('f_phone'); if(f) f.focus(); }, 80); };
+window.doForgot = async ()=>{
+  const phone=(document.getElementById('f_phone')?.value||'').trim();
+  const msgEl=document.getElementById('forgotMsg'); const btn=document.getElementById('btnForgot');
+  if(!phone){ if(msgEl) msgEl.textContent='أدخل رقم الهاتف أولا'; return; }
+  if(btn){ btn.disabled=true; btn.textContent='جارٍ الإرسال...'; }
+  if(msgEl) msgEl.textContent='جارٍ البحث عن إيميلك...';
+  try{
+    const m = await lookupAuthEmailByPhone(phone);
+    if(!m || !m.email || !isRealEmail(m.email)){ if(msgEl) msgEl.textContent='هذا الرقم ما عنده إيميل استرجاع. سجل حساب جديد مع إيميل.'; if(btn){ btn.disabled=false; btn.textContent='إرسال رابط الاسترجاع إلى إيميلي'; } return; }
+    await sendPasswordResetEmail(auth, m.email);
+    if(msgEl) msgEl.textContent='تم ✅ إرسال رابط الاسترجاع إلى '+m.email+'. افتح إيميلك (حتى السبام) واضغط الرابط.';
+    toast('تم إرسال رابط الاسترجاع إلى إيميلك');
+  }catch(e){ console.error(e); if(msgEl) msgEl.textContent = e.code==='auth/user-not-found' ? 'ما لقينا حساب بهذا الإيميل' : 'تعذر إرسال الرابط: '+(e.message||''); }
+  if(btn){ btn.disabled=false; btn.textContent='إرسال رابط الاسترجاع إلى إيميلي'; }
+};
+window.doLogout = async ()=>{ unbindPush(); await signOut(auth); profile=null; _loaded=false; _loadedD=false; _fast=false; renderAuthChoice(); toast('تم تسجيل الخروج'); };
+window.pTab = async (t)=>{ currentTab=t; _fast=true; await renderPatient(); window.scrollTo({top:0}); };
+window.dTab = async (t)=>{ currentTab=t; selectedPatientUid=null; _fast=true; await renderDoctor(); window.scrollTo({top:0}); };
+window.onMeasType = ()=>{
+  const type=document.getElementById('m_type')?.value||'ضغط'; const wrap=document.getElementById('measFields'); if(!wrap) return;
+  if(type==='ضغط') wrap.innerHTML=`<label class="label">الانقباضي</label><input id="m_sys" placeholder="مثال: 132"><label class="label">الانبساطي</label><input id="m_dia" placeholder="مثال: 84"><label class="label">النبض مع الضغط</label><input id="m_pulse" placeholder="مثال: 76">`;
+  else if(type==='سكر') wrap.innerHTML=`<label class="label">القيمة</label><input id="m_val" placeholder="أدخل القيمة"><label class="label">نوع قياس السكر</label><select id="m_sugarType"><option>صائم</option><option>عشوائي</option><option>بعد الأكل بساعتين</option></select>`;
+  else wrap.innerHTML=`<label class="label">القيمة</label><input id="m_val" placeholder="أدخل القيمة">`;
+};
+window.addMeasurement = async ()=>{
+  const type=document.getElementById('m_type').value; const time=document.getElementById('m_time').value || new Date().toISOString(); const notes=document.getElementById('m_notes').value;
+  let data={ type, time: new Date(time).toISOString(), notes, ownerUid: profile.uid, createdAt: new Date().toISOString() };
+  if(type==='ضغط'){ data.sys=document.getElementById('m_sys').value; data.dia=document.getElementById('m_dia').value; data.pulse=document.getElementById('m_pulse').value; if(!data.sys||!data.dia){ toast('أدخل قيمتي الضغط'); return; } }
+  else if(type==='سكر'){ data.value=document.getElementById('m_val').value; data.sugarType=document.getElementById('m_sugarType').value; if(!data.value){ toast('أدخل قيمة القياس'); return; } }
+  else { data.value=document.getElementById('m_val').value; if(!data.value){ toast('أدخل قيمة القياس'); return; } }
+  const nr = push(ref(db,'sehaty_measurements/'+profile.uid)); await set(nr, data); toast('تم حفظ القياس وعرض تحليله'); await renderPatient();
+};
+window.delMeas = async (id)=>{ if(!confirm('تأكيد الحذف؟')) return; await remove(ref(db,'sehaty_measurements/'+profile.uid+'/'+id)); toast('تم الحذف'); await renderPatient(); };
+window.addMedicine = async ()=>{
+  const name=document.getElementById('med_name').value.trim(); if(!name){ toast('أدخل اسم الدواء'); return; }
+  const data={ name, dose: document.getElementById('med_dose').value, time: document.getElementById('med_time').value, note: document.getElementById('med_note').value, ownerUid: profile.uid, takenToday:false, createdAt: new Date().toISOString() };
+  const nr=push(ref(db,'sehaty_medicines/'+profile.uid)); await set(nr,data); toast('تمت إضافة الدواء'); await renderPatient();
+};
+window.delMed = async (id)=>{ if(!confirm('تأكيد الحذف؟')) return; await remove(ref(db,'sehaty_medicines/'+profile.uid+'/'+id)); toast('تم الحذف'); await renderPatient(); };
+window.toggleTaken = async (id, val)=>{ await update(ref(db,'sehaty_medicines/'+profile.uid+'/'+id), {takenToday: !!val}); toast(val?'أحسنت، تم تسجيل جرعة اليوم':'تم إلغاء تسجيل الجرعة'); await renderPatient(); };
+window.addReminder = async ()=>{
+  const time=document.getElementById('rem_time').value;
+  if(!time){ toast('اختار الوقت أولا'); return; }
+  const data={ type: document.getElementById('rem_type').value, time, repeat: document.getElementById('rem_repeat').value, note: document.getElementById('rem_note').value, active:true, ownerUid: profile.uid, createdAt: new Date().toISOString() };
+  const nr=push(ref(db,'sehaty_reminders/'+profile.uid)); await set(nr,data);
+  cache.reminders[nr.key||Date.now()] = data; saveRemindersBackup(); startReminderScheduler();
+  toast('تمت إضافة التذكير ✅');
+  await renderPatient();
+};
+window.toggleRem = async (id, val)=>{ await update(ref(db,'sehaty_reminders/'+profile.uid+'/'+id), {active: !!val}); if(cache.reminders[id]) cache.reminders[id].active=!!val; saveRemindersBackup(); startReminderScheduler(); await renderPatient(); };
+window.delRem = async (id)=>{ if(!confirm('تأكيد الحذف؟')) return; await remove(ref(db,'sehaty_reminders/'+profile.uid+'/'+id)); if(cache.reminders[id]) delete cache.reminders[id]; saveRemindersBackup(); startReminderScheduler(); await renderPatient(); };
+window.copyReport = async (txt)=>{ try{ await navigator.clipboard.writeText(txt); toast('تم النسخ'); }catch(e){ toast(txt); } };
+window.shareWa = (txt)=>{ const n=document.getElementById('waNum').value.trim(); if(!n){ toast('أدخل رقم الواتساب أولا'); return; } window.open('https://wa.me/'+n.replace(/\D/g,'')+'?text='+encodeURIComponent(txt),'_blank'); };
+window.saveProfile = async ()=>{ const upd={ name: document.getElementById('p_name').value.trim(), age: document.getElementById('p_age').value.trim(), gender: document.getElementById('p_gender').value, conditions: document.getElementById('p_conds').value.split('،').map(s=>s.trim()).filter(Boolean) }; await update(ref(db,'sehaty_profiles/'+profile.uid), upd); profile={...profile,...upd}; toast('تم تعديل ملفك الشخصي بنجاح'); await renderPatient(); };
+window.changePass = async ()=>{ const np=document.getElementById('newPass').value; if(!np||np.length<6){ toast('اختر كلمة سر جديدة من 6 أحرف على الأقل'); return; } try{ await updatePassword(auth.currentUser, np); toast('تم تغيير كلمة السر، سجل الدخول الآن'); }catch(e){ toast('تعذر تغيير كلمة السر، سجل خروج ودخول مرة أخرى ثم حاول'); } };
+window.changePassDoctor = async ()=>{ const np=document.getElementById('newPassD').value; if(!np||np.length<6){ toast('اختر كلمة سر جديدة من 6 أحرف على الأقل'); return; } try{ await updatePassword(auth.currentUser, np); toast('تم تغيير كلمة السر'); }catch(e){ toast('تعذر تغيير كلمة السر، سجل خروج ودخول مرة أخرى ثم حاول'); } };
+window.sendLinkRequest = async ()=>{
+  const code=document.getElementById('linkCode').value.trim().toUpperCase(); if(!code){ toast('أدخل كود الطبيب'); return; }
+  try{
+    const cs = await get(ref(db,'sehaty_doctor_codes/'+code)); if(!cs.exists()){ toast('كود الطبيب غير صحيح، تأكد من الكود مع طبيب مسجل'); return; }
+    const doc = cs.val(); if(cache.link && cache.link.doctorUid===doc.uid){ toast('أنت مربوط بهذا الطبيب بالفعل'); return; }
+    if(cache.link && cache.link.doctorUid){ toast('أنت مربوط بطبيب آخر، ألغِ الربط أولا لتغيير الطبيب'); return; }
+    if(cache.requests.find(r=>r.doctorUid===doc.uid && r.status==='pending')){ toast('لديك طلب ربط قيد الانتظار لدى هذا الطبيب، انتظر قبوله'); return; }
+    const nr=push(ref(db,'sehaty_requests')); await set(nr, { doctorUid: doc.uid, doctorCode: code, doctorName: doc.name, patientUid: profile.uid, patientName: profile.name, patientPhone: profile.phone, status:'pending', createdAt: new Date().toISOString() });
+    toast('تم إرسال طلب الربط، انتظر قبوله'); await renderPatient();
+  }catch(e){ toast('تعذر إرسال الطلب: '+e.message); }
+};
+window.unlinkDoctor = async ()=>{
+  if(!confirm('تأكيد إلغاء الربط مع الطبيب؟')) return;
+  try{
+    if(cache.link?.doctorUid) await remove(ref(db,'sehaty_doctor_patients/'+cache.link.doctorUid+'/'+profile.uid));
+    await remove(ref(db,'sehaty_links/'+profile.uid)); toast('تم إلغاء الربط مع الطبيب'); await renderPatient();
+  }catch(e){ toast('تعذر إلغاء الربط: '+e.message); }
+};
+window.deleteAccount = async ()=>{
+  const w=document.getElementById('delWord').value.trim(); if(w!=='حذف'){ toast('اكتب كلمة حذف بالضبط للتأكيد'); return; }
+  if(!confirm('حذف نهائي؟ لا يمكن التراجع.')) return;
+  try{
+    const uid=profile.uid;
+    if(cache.link?.doctorUid) { try{ await remove(ref(db,'sehaty_doctor_patients/'+cache.link.doctorUid+'/'+uid)); }catch(e){} }
+    await remove(ref(db,'sehaty_measurements/'+uid)); await remove(ref(db,'sehaty_medicines/'+uid)); await remove(ref(db,'sehaty_reminders/'+uid)); await remove(ref(db,'sehaty_notes/'+uid)); await remove(ref(db,'sehaty_links/'+uid));
+    // delete own requests
+    for(let r of cache.requests){ try{ await remove(ref(db,'sehaty_requests/'+r.id)); }catch(e){} }
+    await remove(ref(db,'sehaty_profiles/'+uid));
+    await deleteUser(auth.currentUser); profile=null; _loaded=false; _loadedD=false; _fast=false; toast('تم حذف الحساب'); renderAuthChoice();
+  }catch(e){ toast('تعذر حذف الحساب، سجل خروج ودخول مرة أخرى ثم حاول: '+e.message); }
+};
+// Doctor actions
+window.copyText = async (t)=>{ try{ await navigator.clipboard.writeText(t); toast('تم النسخ'); }catch(e){ toast(t); } };
+window.filterPatients = ()=>{ const q=(document.getElementById('searchPat').value||'').toLowerCase(); document.querySelectorAll('.patItem').forEach(el=>{ el.style.display = el.dataset.name.includes(q)?'block':'none'; }); };
+window.openPatient = async (uid)=>{
+  try{
+    selectedPatientUid=uid; currentTab='patients';
+    selectedPatientProfile=await loadProfile(uid);
+    _fast=true; await renderDoctor(); window.scrollTo({top:0});
+  }catch(e){ console.error(e); selectedPatientUid=null; selectedPatientProfile=null; toast('تعذر فتح ملف المريض: '+(e.code||e.message||'خطأ')); }
+};
+window.closePatient = async ()=>{ selectedPatientUid=null; selectedPatientProfile=null; _fast=true; await renderDoctor(); window.scrollTo({top:0}); };
+window.acceptReq = async (rid)=>{
+  const rq = cache.requests.find(x=>x.id===rid); if(!rq){ toast('الطلب غير موجود'); return; }
+  const patientUid=rq.patientUid, patientName=rq.patientName||'', patientPhone=rq.patientPhone||'';
+  try{
+    await update(ref(db,'sehaty_requests/'+rid), {status:'accepted'});
+    await set(ref(db,'sehaty_doctor_patients/'+profile.uid+'/'+patientUid), { patientName, patientPhone, linkedAt: new Date().toISOString(), status:'accepted' });
+    await set(ref(db,'sehaty_links/'+patientUid), { doctorUid: profile.uid, doctorName: profile.name, doctorCode: profile.code, doctorPhone: profile.phone, status:'accepted', updatedAt: new Date().toISOString() });
+    toast('تم قبول طلب الربط، وأضيف المريض إلى قائمتك'); await renderDoctor();
+  }catch(e){ toast('تعذر قبول الطلب: '+e.message); }
+};
+window.rejectReq = async (rid)=>{ await update(ref(db,'sehaty_requests/'+rid), {status:'rejected'}); toast('تم الرفض'); await renderDoctor(); };
+window.unlinkPatient = async (patientUid)=>{ if(!confirm('إلغاء ربط هذا المريض؟')) return; await remove(ref(db,'sehaty_doctor_patients/'+profile.uid+'/'+patientUid)); await remove(ref(db,'sehaty_links/'+patientUid)); toast('تم إلغاء الربط'); await renderDoctor(); };
+window.addNote = async (patientUid)=>{ const text=document.getElementById('noteText').value.trim(); if(!text){ toast('اكتب ملاحظتك الطبية'); return; } const nr=push(ref(db,'sehaty_notes/'+patientUid)); await set(nr, { patientUid, doctorUid: profile.uid, doctorName: profile.name, text, date: new Date().toISOString(), createdAt: new Date().toISOString() }); toast('تم حفظ ملاحظة الطبيب'); await renderDoctor(); };
+window.delNote = async (patientUid, nid)=>{ if(!confirm('حذف الملاحظة؟')) return; await remove(ref(db,'sehaty_notes/'+patientUid+'/'+nid)); await renderDoctor(); };
+window.doctorAddMeas = async (patientUid)=>{
+  const type=document.getElementById('dm_type').value; const time=document.getElementById('dm_time').value || new Date().toISOString();
+  let data={ type, time: new Date(time).toISOString(), notes:'أضيف من الطبيب', ownerUid: patientUid, createdBy: profile.uid, createdAt: new Date().toISOString() };
+  if(type==='ضغط'){ data.sys=document.getElementById('dm_sys').value; data.dia=document.getElementById('dm_dia').value; if(!data.sys||!data.dia){ toast('أدخل قيمتي الضغط'); return; } }
+  else { data.value=document.getElementById('dm_val').value; if(!data.value){ toast('أدخل القيمة'); return; } }
+  const nr=push(ref(db,'sehaty_measurements/'+patientUid)); await set(nr,data); toast('تمت إضافة قياس للمريض بنجاح'); await renderDoctor();
+};
+window.doctorAddMed = async (patientUid)=>{
+  const name=document.getElementById('dm_med').value.trim(); if(!name){ toast('أدخل اسم الدواء'); return; }
+  const nr=push(ref(db,'sehaty_medicines/'+patientUid)); await set(nr, { name, dose: document.getElementById('dm_dose').value, time:'', note:'أضيف من الطبيب', ownerUid: patientUid, takenToday:false, createdAt: new Date().toISOString() }); toast('تمت إضافة دواء للمريض بنجاح'); await renderDoctor();
+};
+window.saveDoctorProfile = async ()=>{
+  const upd={ name: document.getElementById('d_name').value.trim(), specialty: document.getElementById('d_spec').value.trim(), clinic: document.getElementById('d_clinic').value.trim() };
+  await update(ref(db,'sehaty_profiles/'+profile.uid), upd);
+  if(profile.code) await update(ref(db,'sehaty_doctor_codes/'+profile.code), { name: upd.name, specialty: upd.specialty, clinic: upd.clinic });
+  profile={...profile,...upd}; toast('تم تعديل ملف الطبيب بنجاح'); await renderDoctor();
+};
+window.deleteDoctorAccount = async ()=>{
+  const w=document.getElementById('delWordD').value.trim(); if(w!=='حذف'){ toast('اكتب كلمة حذف بالضبط'); return; }
+  if(!confirm('حذف نهائي لحساب الطبيب؟')) return;
+  try{
+    const uid=profile.uid;
+    // unlink all patients
+    for(let puid of Object.keys(cache.doctorPatients||{})){ try{ await remove(ref(db,'sehaty_links/'+puid)); }catch(e){} }
+    await remove(ref(db,'sehaty_doctor_patients/'+uid));
+    if(profile.code) await remove(ref(db,'sehaty_doctor_codes/'+profile.code));
+    for(let r of cache.requests){ try{ await remove(ref(db,'sehaty_requests/'+r.id)); }catch(e){} }
+    await remove(ref(db,'sehaty_profiles/'+uid));
+    await deleteUser(auth.currentUser); profile=null; _loaded=false; _loadedD=false; _fast=false; toast('تم حذف الحساب'); renderAuthChoice();
+  }catch(e){ toast('تعذر حذف الحساب: '+e.message); }
+};
+
+// ---------- AUTH STATE ----------
+onAuthStateChanged(auth, async (user)=>{
+  if(!user){ profile=null; renderAuthChoice(); return; }
+  try{
+    const p = await loadProfile(user.uid);
+    if(!p){ appEl.innerHTML = `<div class="card"><h2>الحساب موجود لكن الملف غير مكتمل</h2><p class="muted">هذا الحساب أنشئ في Authentication لكن لا يوجد ملف له. سجل خروج وسجل حساب جديد، أو تواصل مع الدعم.</p><button class="btn" onclick="window.doLogout()">تسجيل خروج</button></div>`; return; }
+    profile=p;
+    if(!IS_APP) registerSW();
+    if(p.role==='doctor'){ currentTab='home'; await renderDoctor(); }
+    else { currentTab='home'; bindPush(p.uid); setTimeout(()=>bindPush(p.uid),3000); setTimeout(()=>bindPush(p.uid),8000); await renderPatient(); saveRemindersBackup(); startReminderScheduler(); if(!IS_APP && location.protocol!=='file:'){ setupPush(); } }
+  }catch(e){
+    console.error(e);
+    appEl.innerHTML = `<div class="card"><h2>تعذر تحميل الملف</h2><p class="muted">${esc(e.message)}</p><p class="muted">تأكد أنك فعلت Authentication Email/Password وطبقت القواعد الآمنة الجديدة. راجع خطوات التفعيل أسفل الرسالة.</p><button class="btn" onclick="window.doLogout()">تسجيل خروج</button></div>`;
+  }
+});
+
+renderAuthChoice();
+</script>
+<script src="afiaty-median-onesignal.js"></script>
+<script src="afiaty-firestore-sync.js"></script>
+</body>
+</html>

@@ -199,8 +199,8 @@ async function setupPush(){
     return { ok:true, token };
   }catch(e){ console.log('setupPush failed', e); return { ok:false, reason: e.message }; }
 }
-window.installApp = async ()=>{ if(_deferredPrompt){ _deferredPrompt.prompt(); const r = await _deferredPrompt.userChoice; _deferredPrompt=null; if(r.outcome==='accepted') toast('تم ✅'); } else { toast('من قائمة كروم دوس: إضافة إلى الشاشة الرئيسية / Install App'); } };
-window.enablePush = async ()=>{ const r = await setupPush(); if(r.ok){ toast('تم تفعيل الإشعارات ✅'); await renderPatient(); } else if(r.reason==='file'){ toast('تعذر تفعيل الإشعارات هنا'); } else if(r.reason==='no-vapid'){ toast('تعذر تفعيل الإشعارات على هذا الجهاز'); } else if(r.reason==='denied'){ toast('رفضت إذن الإشعارات - ادخل إعدادات كروم وفعلها'); } else { toast('تعذر تفعيل الإشعارات: '+r.reason); } };
+window.installApp = async ()=>{ if(_deferredPrompt){ _deferredPrompt.prompt(); const r = await _deferredPrompt.userChoice; _deferredPrompt=null; if(r.outcome==='accepted') toast('تم ✅'); } else { toast('من قائمة كروم دوس: إضافة إلى الشاشة الرئيسية / Install App')
+                                                                                                                                                               } else { if(window.median){ toast('تم تفعيل الإشعارات ✅'); } else { toast('تعذر تفعيل الإشعارات: '+r.reason); } }                                    
 
 // ===== نظام التنبيه الاحتياطي (إذا كان التطبيق مفتوح) =====
 let _remTimer = null;

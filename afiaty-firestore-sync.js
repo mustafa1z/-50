@@ -4,10 +4,25 @@
   // امسح هالسطرين الجوه، والصق بدالهم الكود اللي نسخته من Firebase
   // اللي يبدي بـ const firebaseConfig = {
   // وينتهي بـ };
-  // PASTE YOUR FIREBASE CONFIG HERE
+  
+
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBG-xwxw6GuVhxL6mFsTlg0pJE6w_Oigtw",
+  authDomain: "afiaty-app-c4d19.firebaseapp.com",
+  databaseURL: "https://afiaty-app-c4d19-default-rtdb.firebaseio.com",
+  projectId: "afiaty-app-c4d19",
+  storageBucket: "afiaty-app-c4d19.firebasestorage.app",
+  messagingSenderId: "517088634256",
+  appId: "1:517088634256:web:491bcbdeda8acb5704ff15",
+  measurementId: "G-D9KVXC9R2N"
+};
+
 
   // ===== 2) باقي الكود - لا تغير شي هنا =====
-  function loadScript(src) {
+    function loadScript(src) {
     return new Promise(function (res, rej) {
       if (document.querySelector('script[src="' + src + '"]')) return res();
       var s = document.createElement('script');

@@ -77,8 +77,8 @@ const firebaseConfig = {
       if (!window.firebase || !window.firebase.firestore) return;
       if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
       var db = firebase.firestore();
-      var playerId = getPlayerId();
-      if (!playerId) return;
+      var playerId = getPlayerId()  || 'pending'; 
+      
       var synced = getSynced();
 
       for (var i = 0; i < localStorage.length; i++) {
@@ -137,8 +137,8 @@ const firebaseConfig = {
         try {
           if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
           var db = firebase.firestore();
-          var pid = getPlayerId();
-          if (!pid) return;
+          var pid = getPlayerId()  || 'pending'; 
+          
           await db.collection('reminders').add({
             medicineName: med,
             playerId: pid,
